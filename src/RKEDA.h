@@ -9,23 +9,29 @@
 #define	RKEDA_H
 #include <iostream>
 #include "EDAUtils.h"
+#include "AziziAdaptativeCooling.h"
 using namespace std;
 
 class RKEDA {
 public:
-    RKEDA(int probSize, int popSize, int trunSize, double stdev, int FEs, string filename, std::string results, unsigned long seed);
-    //	void runAlgorithm(string fileName, string fileNameResults);
-    void runAlgorithm1(string fileName, string fileNameResults);
-    int problemSize;
-    int populationSize;
-    int truncationSize;
-    double variance;
-    string fileName;
-    int fitnessEvaluations;
-    string fileNameResults;
-    EDAUtils e;
-    PFSP fsp;
-	unsigned long seed;
+
+    RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed);
+
+    void runAlgorithm(double minTemp, double heating);
+
+    int m_problemSize;
+    int m_populationSize;
+    int m_truncationSize;
+    double m_variance;
+    double m_elitism;
+    int m_FEs;
+    string m_fileName;
+    string m_dynamicPath;
+    string m_resultsPath;
+    EDAUtils m_e;
+    PFSP m_fsp;
+    AziziAdaptativeCooling m_cooling;
+	unsigned long m_seed;
 private:
 
 };
