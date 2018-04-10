@@ -22,7 +22,7 @@ PFSP::~PFSP()
         }
 	delete[] jobsTimeTable_aux;
 	//delete auxiliary data tables for evaluation.
-        delete[] genes_aux;
+    delete[] genes_aux;
 	delete[] inverted_aux;
 	
 	

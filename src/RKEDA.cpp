@@ -16,6 +16,7 @@
 #include <ctime>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <stdio.h>      /* printf */
 #include <math.h>       /* pow */
 
@@ -28,24 +29,56 @@ RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int
 	m_elitism = elitism;
 	m_resultsPath = results;
 	m_seed = theseed;
-	m_variance = 0.05;
+
+    m_problemSize = 0;
 }
+
+ void RKEDA::setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run){
+	 // Create an output string stream
+	 std::ostringstream streamObj1;
+	 std::ostringstream streamObj2;
+	 std::ostringstream streamObj3;
+
+	 // Set Fixed -Point Notation
+	 streamObj1 << std::fixed;
+	 streamObj2 << std::fixed;
+	 streamObj3 << std::fixed;
+
+	 // Set precision to 2 digits
+	 streamObj1 << std::setprecision(2);
+	 streamObj2 << std::setprecision(2);
+	 streamObj3 << std::setprecision(0);
+
+	 //Add double to stream
+	 streamObj1 << minTemp;
+	 streamObj2 << heating;
+	 streamObj3 << m_elitism;
+
+	 // Get string from output string stream
+	 std::string strObj1 = streamObj1.str();
+	 std::string strObj2 = streamObj2.str();
+	 std::string strObj3 = streamObj3.str();
+
+	 size_t lastindex = fileName.find_last_of(".");
+	 string instance = fileName.substr(0, lastindex);
+
+	 lastindex = dynamicName.find_last_of(".");
+	 string dynamic= dynamicName.substr(0, lastindex);
+
+	 m_resultsPath += "process-" + instance+ "-" + dynamic + "-currentbest_" + strObj1 + "_" + strObj2 +
+			 "-elt" + strObj3 + "--" + std::to_string(run) +".csv";
+}
+
 
 void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	// Initialization of the space
-	string results = "FileName \t Solution \tFitness \t err \t FEs \n";
-	string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
 
-	using std::cout;
-	using std::endl;
-
-	double stdev = 0;
 
 
 	RK *bestSolution, *previousBest, *bestSolutionOfPopulation;
-	m_fsp.ReadInstance(m_fileName);
-	m_problemSize = m_fsp.JOB_NUM;
+	m_problemSize = m_fsp.ReadInstance(m_fileName);
+	//m_problemSize = m_fsp.JOB_NUM;
 
 	vector<RK*> pop(m_populationSize);
 	vector<RK*> population(m_populationSize);
@@ -70,19 +103,19 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	int improvement = 0;
 
-	AziziAdaptativeCooling* cooling = new AziziAdaptativeCooling(minTemp, heating);
-
+	AziziAdaptativeCooling *cooling = new AziziAdaptativeCooling(minTemp, heating);
+	double stdev = cooling->getNewTemperature(improvement);
 	time_t  starttime = time(0);
-//	cout << "starttime:" << starttime << endl;
-//	std::cout << "starttime:" << starttime << std::flush << endl;
 
 	srand(m_seed);
 
-	cout << "fes; gen; stdev; best" << endl;
+	cout << "gen\tfes\tbestFit\tavgFit\tbestFound\tnoCurrentImprov\tstdev" << endl;
+	//string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
+	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprov,stdev\n";
+
 
 	// Initialize the first population
 	for (int i = 0; i < m_populationSize; i++) {
-		//cout << "i: " << i << endl;
 
 		// Create the random keys of the individuals
 		double* childAct = new double[m_problemSize];
@@ -97,26 +130,25 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		child->setFitness(m_fsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
 		noOfEvals++;
 		pop[i] = (child);
-
-		if (i == 0) {
-			bestSolution = child;
-		}
-		else {
-			if (bestSolution->getFitness() > child->getFitness()) {
-				bestSolution = child;
-			}
-		}
 	}
+
+	bestSolution = m_e.getBestSolutionMin(pop);
 	previousBest = bestSolution->Clone2();
+	bestSolutionOfPopulation = bestSolution->Clone2();
+
+	double avgFitness = m_e.getPopulationAverageFitness(pop);
 
 
-
+	int gen = 0;
 	// Iterative process
-	for (int i = 0; i < numberofGenerations; i++) {
-		if (noOfEvals >= m_FEs) {
-			break;
-		}
-		stdev = cooling->getNewTemperature(improvement);
+	do/*for (int i = 0; i < numberofGenerations; i++)*/ {
+
+
+		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
+				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << endl;
+		results =+ (gen+1) + "," + to_string(static_cast<long long>(noOfEvals)) + "," + std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," + std::to_string(static_cast<long double>(avgFitness)) + "," + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," + to_string(static_cast<long long>(improvement)) + "," + std::to_string(static_cast<long double>(stdev)) + "\n";
+
+//		results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
 
 		double* matrix = new double[m_problemSize];
 		matrix = m_e.getPM(pop, m_truncationSize, m_problemSize);
@@ -125,12 +157,10 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 			double* childAct = new double[m_problemSize];
 			for (int x = 0; x < m_problemSize; x++) {
-				// double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
 				mean = matrix[x];
 				childAct[x] = random->normal(stdev) + mean;
 			}
 			RK* child = new RK(childAct, m_problemSize);
-			//            RK child(childAct, problemSize);
 			child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
 			child->normalise();
 			child->setFitness(m_fsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
@@ -144,45 +174,47 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 			if (bestSolution->getFitness() > child->getFitness()) {
 				bestSolution = child->Clone2();
 
-				cout << noOfEvals << "; " << (i+1) << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
+//				cout << noOfEvals << "; " << (i+1) << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
 
 				//results1 = fileName + "\t" + e.perm2str(bestSolution->getPermutation(), problemSize) + "\t" + std::to_string(bestSolution->getFitness()) + "\t" + "0" + "\t" + to_string(noOfEvals) + "\n"; // ##C++11
-				results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
-			}
-
-			if (j == 0) {
-				bestSolutionOfPopulation = child;
-			}
-			else {
-				if (bestSolutionOfPopulation->getFitness() > child->getFitness()) {
-					bestSolutionOfPopulation = child;
-				}
+//				results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
 			}
 		}
 
+		bestSolutionOfPopulation = m_e.getBestSolutionMin(population);
+
+		// CURRENT BEST
 		if (previousBest->getFitness() > bestSolutionOfPopulation->getFitness()){
 			improvement = 0;
 		}else{
 			improvement++;
 		}
+		previousBest =  bestSolutionOfPopulation->Clone2();
 
-
-		for (int i = 0; i < pop.size(); i++)
-		{
+		for (int i = 0; i < pop.size(); i++){
 			delete pop[i];
 		}
+
 		pop = population;
+		avgFitness = m_e.getPopulationAverageFitness(pop);
+		stdev = cooling->getNewTemperature(improvement);
 
 		delete[] matrix;
-		//        population.clear();
-	}
+
+		gen++;
+	} while(noOfEvals < m_FEs);
+
+
+	cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t" << avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << endl;
+	results =+ (gen+1) + "," + to_string(static_cast<long long>(noOfEvals)) + "," + std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," + std::to_string(static_cast<long double>(avgFitness)) + "," + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," + to_string(static_cast<long long>(improvement)) + "," + std::to_string(static_cast<long double>(stdev)) + "\n";
 
 	time_t  endtime = time(0);
 
 	ofstream myfile1;
 	myfile1.open(m_resultsPath);
 
-	myfile1 << results1;
+//	myfile1 << results1;
+	myfile1 << results;
 	myfile1.close();
 
 }

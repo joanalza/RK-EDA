@@ -19,6 +19,9 @@ public:
     bool myfunction(RK* i, RK* j);
     struct myclass;
     vector<RK*> sortPopulation(vector<RK*> pop);
+    RK* getBestSolutionMin(vector<RK*> pop);
+    double getPopulationAverageFitness(vector<RK*> pop);
+//    RK* getBestSolutionMax(vector<RK*> pop);
     double* getPM(vector<RK*> currentPopulation, int truncSize, int pSize);
     double* getChild(double* currentModel, double stdev, int pSize);
 //    vector<double*> getPopulation(double* currentModel, double stdev, int probSize, int populationSize);

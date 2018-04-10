@@ -48,6 +48,25 @@ vector<RK*> EDAUtils::sortPopulation(vector<RK*> pop) {
     return pop;
 }
 
+RK* EDAUtils::getBestSolutionMin(vector<RK*> pop){
+    RK *best = pop.at(0);
+    for (int i = 1; i < pop.size(); i++) {
+        RK *S = pop.at(i);
+        if (S->getFitness() < best->getFitness()) {
+            best = S->Clone2();
+        }
+    }
+    return best->Clone2();
+}
+
+double EDAUtils::getPopulationAverageFitness(vector<RK*> pop){
+	double *vals = new double[pop.size()];
+	for(int i=0; i<pop.size(); i++){
+		vals[i] = pop.at(i)->getFitness();
+	}
+	return EDAUtils::Mean(vals, pop.size());
+}
+
 double* EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize) {
     vector<RK*> selectedGenome;
     vector<RK*> pop;
