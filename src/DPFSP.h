@@ -40,12 +40,23 @@ public:
 	double EvaluateFSPMakespan(int * genes);
 	int EvaluateFSPTotalFlowtime(int * genes);
 	int getNumberofEvaluation();
+	int getProblemSize();
+	void setIdentityPermutationChanges();
+	bool changeIdentityPermutation(int fes, int maxfes);
 
 	int m_jobs;
 	int m_machines;
 	int **m_processing_matrix;
 	int m_evaluations;
 	Tools m_t;
+
+	string m_dynamicProfilePath;
+	int m_nextChangeIndex = 0;
+	int m_changes;
+	int *m_identityPermutation;
+	int **m_identityPermutations;
+	double *m_idenityChangesPercentage; // Percentage of the maxFes at which a change happens
+
 private:
 
 };

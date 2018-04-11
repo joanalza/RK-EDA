@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 	} else {
 
 //		string input = "500 ./taillard_instances/ tai50_5_0.fsp 220712150 50 0 0.05 ./results/ tai50_5_0P500T50V0.06e0run0.txt ";
-		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-noChange.txt -1 5 0 0.02 ./results/ 0.06 ";
+		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ 0.06 ";
 
 		long found = 0;
 		vector<int> pos;

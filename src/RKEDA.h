@@ -10,6 +10,7 @@
 #include <iostream>
 #include "EDAUtils.h"
 #include "AziziAdaptativeCooling.h"
+#include "DPFSP.h"
 using namespace std;
 
 class RKEDA {
@@ -30,6 +31,7 @@ public:
     string m_resultsPath;
     EDAUtils m_e;
     PFSP m_fsp;
+    DPFSP m_dfsp;
     AziziAdaptativeCooling m_cooling;
 	unsigned long m_seed;
 private:
