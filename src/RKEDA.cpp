@@ -76,7 +76,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 
 
-	RK *bestSolution, *previousBest, *bestSolutionOfPopulation;
+	RK *bestSolution, *previousBest, *bestSolutionOfPopulation, *bestChange;
 	//m_problemSize = m_fsp.ReadInstance(m_fileName);
 	m_problemSize = m_dfsp.ReadTaillardInstance(m_fileName, m_dynamicPath);
 	//m_dfsp.setIdentityPermutationChanges();
@@ -109,9 +109,11 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	srand(m_seed);
 
-	cout << "gen\tfes\tbestFit\tavgFit\tbestFound\tnoCurrentImprov\tstdev\tchange" << endl;
+	cout << "gen\tfes\tbestFit\tavgFit\t\tbestFound\tnoCurrentImprov\tsd\tchange\tchangeGen\tbestPerChange" << endl;
+
+
 	//string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
-	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprov,stdev,changes\n";
+	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprovementCounter,sd,change,changeGen,bestPerChange\n";
 
 
 	// Initialize the first population
@@ -135,31 +137,41 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 	bestSolution = m_e.getBestSolutionMin(pop);
 	previousBest = bestSolution->Clone2();
 	bestSolutionOfPopulation = bestSolution->Clone2();
+	bestChange = bestSolution->Clone2();
 
 	double avgFitness = m_e.getPopulationAverageFitness(pop);
 
+	int gen = 0, ichange = 1, genChange = 1;
 
-	int gen = 0, ichange = 1;
+
 	// Iterative process
 	do/*for (int i = 0; i < numberofGenerations; i++)*/ {
 
 		// Check if a change has occurred and change it if so
 		bool changed = m_dfsp.changeIdentityPermutation(noOfEvals, m_FEs);
 		if(changed){
+			genChange = 1;
 			for(int i=0; i< m_populationSize; i++){
 				pop.at(i)->fitness = m_dfsp.EvaluateFSPTotalFlowtime(pop.at(i)->permutation);
 			}
+			bestSolutionOfPopulation = m_e.getBestSolutionMin(pop);
+			avgFitness = m_e.getPopulationAverageFitness(pop);
+			bestChange = m_e.getBestSolutionMin(pop);
 			ichange++;
 		}
 
 		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
-				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange << endl;
-		results += (gen+1) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
-				std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
-				std::to_string(static_cast<long double>(avgFitness)) + "," +
-				std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," +
-				to_string(static_cast<long long>(improvement)) + "," +
-				std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +"\n";
+				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
+				<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
+		results += to_string(static_cast<long long>(gen+1)) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
+					std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
+					std::to_string(static_cast<long double>(avgFitness)) + "," +
+					std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," +
+					to_string(static_cast<long long>(improvement)) + "," +
+					std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +
+					"," + to_string(static_cast<long long>(genChange)) + "," +
+					std::to_string(static_cast<long double>(bestChange->getFitness())) +"\n";
+
 
 //		results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
 
@@ -189,7 +201,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 //				cout << noOfEvals << "; " << (i+1) << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
 
-				//results1 = fileName + "\t" + e.perm2str(bestSolution->getPermutation(), problemSize) + "\t" + std::to_string(bestSolution->getFitness()) + "\t" + "0" + "\t" + to_string(noOfEvals) + "\n"; // ##C++11
+//				results1 = fileName + "\t" + e.perm2str(bestSolution->getPermutation(), problemSize) + "\t" + std::to_string(bestSolution->getFitness()) + "\t" + "0" + "\t" + to_string(noOfEvals) + "\n"; // ##C++11
 //				results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
 			}
 		}
@@ -204,6 +216,13 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		}
 		previousBest =  bestSolutionOfPopulation->Clone2();
 
+		// NEST PER CHANGE
+		if (bestChange->getFitness() > bestSolutionOfPopulation->getFitness()){
+			bestChange =  bestSolutionOfPopulation->Clone2();
+		}
+
+
+
 		for (int i = 0; i < pop.size(); i++){
 			delete pop[i];
 		}
@@ -211,29 +230,31 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		pop = population;
 		avgFitness = m_e.getPopulationAverageFitness(pop);
 		stdev = cooling->getNewTemperature(improvement);
+		gen++;
+		genChange++;
 
 		delete[] matrix;
 
-		gen++;
 	} while(noOfEvals < m_FEs);
 
 
 	cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
-			<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange << endl;
-	results += (gen+1) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
-			std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
-			std::to_string(static_cast<long double>(avgFitness)) + "," +
-			std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," +
-			to_string(static_cast<long long>(improvement)) + "," +
-			std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +"\n";
+			<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
+			<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
+	results += to_string(static_cast<long long>(gen+1)) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
+				std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
+				std::to_string(static_cast<long double>(avgFitness)) + "," +
+				std::to_string(static_cast<long double>(bestSolution->getFitness())) + "," +
+				to_string(static_cast<long long>(improvement)) + "," +
+				std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +
+				"," + to_string(static_cast<long long>(genChange)) + "," +
+				std::to_string(static_cast<long double>(bestChange->getFitness())) +"\n";
+
 
 	time_t  endtime = time(0);
 
 	ofstream myfile1;
 	myfile1.open(m_resultsPath);
-
-	cout << "###############################################" << endl;
-	cout << results << endl;
 //	myfile1 << results1;
 	myfile1 << results;
 	myfile1.close();

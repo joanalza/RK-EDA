@@ -27,7 +27,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
 	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsName, resultsPath;
-	int populationSize, FEs, truncSize, pSize, elitism;
+	int populationSize, FEs, truncSize, elitism;
 	double minTemp, heating;
 	unsigned long seed;
 

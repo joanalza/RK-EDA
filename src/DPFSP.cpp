@@ -17,12 +17,16 @@ using std::ifstream;
 using std::ofstream;
 
 DPFSP::DPFSP(){
-
 }
 
 DPFSP::~DPFSP(){
+	delete[] m_identityPermutation;
+	delete[] m_idenityChangesPercentage;
 	for (int i = 0; i < m_machines; i++){
 		delete[] m_processing_matrix[i];
+	}
+	for (int j = 0; j < m_changes; j++){
+		delete[] m_identityPermutations[j];
 	}
 }
 
