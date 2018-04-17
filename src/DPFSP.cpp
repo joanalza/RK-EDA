@@ -5,6 +5,7 @@
  *      Author: 1715818
  */
 
+#define  _CRT_SECURE_NO_WARNINGS
 #include "DPFSP.h"
 #include "Tools.h"
 #include "PFSP.h"

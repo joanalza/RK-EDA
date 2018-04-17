@@ -4,6 +4,8 @@
  *
  * Created on 24 April 2017, 15:32
  */
+
+#define  _CRT_SECURE_NO_WARNINGS
 #include "Tools.h"
 #include <cstdlib>
 #include <cstring>

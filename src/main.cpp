@@ -26,7 +26,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsName, resultsPath;
+	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs;
 	int populationSize, FEs, truncSize, elitism;
 	double minTemp, heating;
 	unsigned long seed;
@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
 
 	// If arguments are passed to the execution
 	if (argc > 1) {
-//		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-noChange.txt -1 5 0 0.02 ./results/ 0.06 ";
 
 		string temp = argv[1];
 		stringstream(temp) >> populationSize;
@@ -59,17 +58,18 @@ int main(int argc, char* argv[]) {
 		stringstream(temp) >> minTemp;
 
 		resultsFolder = argv[10];
-
-		temp = argv[11];
-		stringstream(temp) >> heating;
+		saveAs= argv[11];
 
 		temp = argv[12];
+		stringstream(temp) >> heating;
+
+		temp = argv[13];
 		stringstream(temp) >> seed;
 
 	} else {
 
 //		string input = "500 ./taillard_instances/ tai50_5_0.fsp 220712150 50 0 0.05 ./results/ tai50_5_0P500T50V0.06e0run0.txt ";
-		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ 0.06 ";
+		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 0.06 5";
 
 		long found = 0;
 		vector<int> pos;
@@ -110,19 +110,23 @@ int main(int argc, char* argv[]) {
 		resultsFolder = temp;
 
 		temp = input.substr(pos[9] + 1, pos[10] - (pos[9] + 1));
+		saveAs= temp;
+
+		temp = input.substr(pos[10] + 1, pos[11] - (pos[10] + 1));
 		stringstream(temp) >> heating;
+
+		temp = input.substr(pos[11] + 1, pos[12] - (pos[11] + 1));
+		stringstream(temp) >> seed;
 
 		pos.clear();
 	}
 
 	filePath = fileDirectory + fileName;
 	dynamicPath = dynamicFolder + dynamicName;
+	resultsPath = resultsFolder + saveAs;
 
-	for (int i = 0; i < runs; i++){
-		RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsFolder, seed);
-		rkeda->setResultsPath(fileName, dynamicName, minTemp, heating, i);
-		rkeda->runAlgorithm(minTemp, heating);
-	}
+	RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, seed);
+	rkeda->runAlgorithm(minTemp, heating);
 
 	return 0;
 }

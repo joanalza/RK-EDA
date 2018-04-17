@@ -1,3 +1,4 @@
+#define  _CRT_SECURE_NO_WARNINGS
 #include "PFSP.h"
 #include "Tools.h"
 #include <fstream>
