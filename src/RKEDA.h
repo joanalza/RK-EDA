@@ -18,7 +18,7 @@ public:
 
     RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed);
 
-    void setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run);
+//    void setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run);
     void runAlgorithm(double minTemp, double heating);
 
     int m_problemSize;

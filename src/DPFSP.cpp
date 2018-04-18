@@ -33,6 +33,7 @@ DPFSP::~DPFSP(){
 
 int DPFSP::ReadTaillardInstance(string filename, string dynamic){
 
+	m_nextChangeIndex = 0;
 	// Initialization of variables
 	bool readMatrix = false;
 	bool readDimension = false;

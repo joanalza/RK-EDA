@@ -51,7 +51,7 @@ public:
 	Tools m_t;
 
 	string m_dynamicProfilePath;
-	int m_nextChangeIndex = 0;
+	int m_nextChangeIndex;
 	int m_changes;
 	int *m_identityPermutation;
 	int **m_identityPermutations;

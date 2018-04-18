@@ -33,7 +33,7 @@ RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int
     m_problemSize = 0;
 }
 
- void RKEDA::setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run){
+ /*void RKEDA::setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run){
 	 // Create an output string stream
 	 std::ostringstream streamObj1;
 	 std::ostringstream streamObj2;
@@ -66,8 +66,8 @@ RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int
 	 string dynamic= dynamicName.substr(0, lastindex);
 
 	 m_resultsPath += "process-" + instance+ "-" + dynamic + "-currentbest_" + strObj1 + "_" + strObj2 +
-			 "-elt" + strObj3 + "--" + std::to_string(run) +".csv";
-}
+			 "-elt" + strObj3 + "--" + run +".csv";
+}*/
 
 
 void RKEDA::runAlgorithm(double minTemp, double heating) {
@@ -253,9 +253,12 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	time_t  endtime = time(0);
 
+//	cout << m_resultsPath << endl;
+
 	ofstream myfile1;
 	myfile1.open(m_resultsPath);
 //	myfile1 << results1;
+//	cout << results << endl;
 	myfile1 << results;
 	myfile1.close();
 
