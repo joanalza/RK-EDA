@@ -77,6 +77,12 @@ int DPFSP::ReadTaillardInstance(string filename, string dynamic){
 		m_processing_matrix[i] = new int[m_jobs];
 	}
 
+	//BUILD IDENTITY PERMUTATION
+	m_identityPermutation = new int[m_jobs];
+	for (int i = 0; i<m_jobs; i++){
+		m_identityPermutation[i] = i;
+	}
+
 	//FILL JOB PROCESSING MATRIX
 	istringstream iss(data);
 	int i = 0;
@@ -136,31 +142,42 @@ double DPFSP::EvaluateFSPMakespan(int *genes){
 
 int DPFSP::EvaluateFSPTotalFlowtime(int *genes){
 	m_evaluations++;
-	int* timeTable = new int[m_machines];
+	int *timeTable = new int[m_machines];
+	// int[] m_aux= new int[m_jobs];
+
+	for (int i = 0; i < m_machines; i++)
+		timeTable[i] = 0;
+
 	int j, z, job;
 	int machine;
 	int prev_machine = 0;
-	int first_gene = genes[0];
-	timeTable[0] = m_processing_matrix[0][first_gene];
 
-	for (j = 1; j<m_machines; j++){
+	// int first_gene=genes[0];
+	int first_gene = m_identityPermutation[genes[0]];
+
+	timeTable[0] = m_processing_matrix[0][first_gene];
+	for (j = 1; j < m_machines; j++) {
 		timeTable[j] = timeTable[j - 1] + m_processing_matrix[j][first_gene];
 	}
 
 	int fitness = timeTable[m_machines - 1];
-	for (z = 1; z<m_jobs; z++){
-		job = genes[z];
+	for (z = 1; z < m_jobs; z++) {
+		 job=genes[z];
+		job = m_identityPermutation[genes[z]];
 
-		//machine 0 is always incremental, so:
+		// machine 0 is always incremental, so:
 		timeTable[0] += m_processing_matrix[0][job];
 		prev_machine = timeTable[0];
-		for (machine = 1; machine<m_machines; machine++){
+		for (machine = 1; machine < m_machines; machine++) {
 			timeTable[machine] = max(prev_machine, timeTable[machine]) + m_processing_matrix[machine][job];
 			prev_machine = timeTable[machine];
 		}
+
 		fitness += timeTable[m_machines - 1];
 	}
+
 	delete[] timeTable;// ###ORC
+	// return -fitness;
 	return fitness;
 }
 
@@ -224,6 +241,9 @@ bool DPFSP::changeIdentityPermutation(int fes, int maxfes){
 		if(fes>=nextChangeFes){
 			m_identityPermutation = m_identityPermutations[m_nextChangeIndex];
 			m_nextChangeIndex++;
+			cout << "##################################################" << endl;
+			cout << "[" << m_t.perm2str(m_identityPermutation, m_jobs) << "]" << endl;
+			cout << "##################################################" << endl;
 			hasChangedOccured = true;
 		}
 	}

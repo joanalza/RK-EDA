@@ -82,10 +82,15 @@ F.ARR <- function(files, optimums){
     optima <- optimums[which(instance == optimums$Instance),"TotalFlowTime"] 
     df <- read.csv(run)
     n.changes <- max(unique(df$change))
-    ARR <- sapply(2:n.changes, FUN = function(i){
-      sub.df <- df[df$change==i,]
+    if (n.changes!=1){
+      ARR <- sapply(2:n.changes, FUN = function(i){
+        sub.df <- df[df$change==i,]
+        return(get_ARR(sub.df, optima))
+      })
+    }else{
+      sub.df <- df[df$change==n.changes,]
       return(get_ARR(sub.df, optima))
-    })
+    }
     ARR.mean <- mean(ARR) # mean of the formula
     return(ARR.mean)
   })
@@ -119,7 +124,7 @@ F.distance.based.measure <- function(files, n){
 }
 
 ## MAIN ####
-directory <- "C:/Project/Code/RKEDAC++/results/testRKEDA/tai20_10/"
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/noChange/"
 setwd(directory)
 
 # Get files

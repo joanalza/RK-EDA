@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
 	// If arguments are passed to the execution
 	if (argc > 1) {
 
-		cout << "Arguments" << endl;
+//		cout << "Arguments" << endl;
 		string temp = argv[1];
 		stringstream(temp) >> populationSize;
 
@@ -71,9 +71,13 @@ int main(int argc, char* argv[]) {
 
 	} else {
 
-		cout << "Without arguments" << endl;
+//		cout << "Without arguments" << endl;
 //		string input = "500 ./taillard_instances/ tai50_5_0.fsp 220712150 50 0 0.05 ./results/ tai50_5_0P500T50V0.06e0run0.txt ";
-		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 0.06 5";
+
+//		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 0.06 5";
+		string input = "500 taillard_instances/ tai50_10_0.fsp dynamic/ dynProfile-n50-c10-Cayley3.txt -1 5 0 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 0.2 1 ";
+//		string input = "500 taillard_instances/ tai50_10_0.fsp dynamic/ dynProfile-n50-c10-Cayley45.txt -1 5 0 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 0.2 1 ";
+
 
 		long found = 0;
 		vector<int> pos;

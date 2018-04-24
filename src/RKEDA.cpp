@@ -109,7 +109,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	srand(m_seed);
 
-	cout << "gen\tfes\tbestFit\tavgFit\t\tbestFound\tnoCurrentImprov\tsd\tchange\tchangeGen\tbestPerChange" << endl;
+//	cout << "gen\tfes\tbestFit\tavgFit\t\tbestFound\tnoCurrentImprov\tsd\tchange\tchangeGen\tbestPerChange" << endl;
 
 
 	//string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
@@ -143,7 +143,6 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	int gen = 0, ichange = 1, genChange = 1;
 
-
 	// Iterative process
 	do/*for (int i = 0; i < numberofGenerations; i++)*/ {
 
@@ -154,15 +153,16 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 			for(int i=0; i< m_populationSize; i++){
 				pop.at(i)->fitness = m_dfsp.EvaluateFSPTotalFlowtime(pop.at(i)->permutation);
 			}
+			cout << noOfEvals << "; " << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
 			bestSolutionOfPopulation = m_e.getBestSolutionMin(pop);
 			avgFitness = m_e.getPopulationAverageFitness(pop);
 			bestChange = m_e.getBestSolutionMin(pop);
 			ichange++;
 		}
 
-		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
-				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
-				<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
+//		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
+//				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
+//				<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
 		results += to_string(static_cast<long long>(gen+1)) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
 					std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
 					std::to_string(static_cast<long double>(avgFitness)) + "," +
@@ -238,9 +238,9 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 	} while(noOfEvals < m_FEs);
 
 
-	cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
-			<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
-			<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
+//	cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
+//			<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
+//			<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
 	results += to_string(static_cast<long long>(gen+1)) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
 				std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
 				std::to_string(static_cast<long double>(avgFitness)) + "," +

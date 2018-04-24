@@ -21,6 +21,6 @@ AziziAdaptativeCooling::AziziAdaptativeCooling(double minTemp, double heating){
 }
 
 double AziziAdaptativeCooling::getNewTemperature(int noImprovementCounter){
-	currentTemp = minTemperature + heatingCoefficient * log(1+noImprovementCounter);
+	currentTemp = minTemperature + (heatingCoefficient * log(1+noImprovementCounter));
 	return currentTemp;
 }
