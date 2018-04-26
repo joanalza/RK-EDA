@@ -1,3 +1,5 @@
+library(gtools)
+
 #### PERFORMANCE MEASURE FUNCTIONS ####
 
 
@@ -124,7 +126,8 @@ F.distance.based.measure <- function(files, n){
 }
 
 ## MAIN ####
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/noChange/"
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai50/tai50_10/"
+# directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/tai100_10_0/Cayley 90/"
 setwd(directory)
 
 # Get files
@@ -141,33 +144,71 @@ instances <- unlist(unique(sapply(strsplit(files.progress,"-"), FUN = function(x
   return(x[grep("tai",x)])
 })))
 
+changes <- unlist(unique(sapply(strsplit(files.progress,"-"), FUN = function(x){
+  return(x[grep("(c[0-9]+|noChange)",x)])
+})))
+
+cayley <- unlist(unique(sapply(strsplit(files.progress,"-"), FUN = function(x){
+  return(x[grep("Cayley",x)])
+})))
+
 optimums <- read.csv("C:/Project/Code/RKEDAC++/optimums/optimum.csv")
 
+# Get running files
+
+cooling.files <- lapply(cooling.param, FUN = function(x){
+  files <- list.files(directory, pattern = x)
+  return(files[grep(".csv",files)])
+})
+
+instance.files <- lapply(instances, FUN = function(x){
+  files <- list.files(directory, pattern = x)
+  return(files[grep(".csv",files)])
+})
+
+changes.files <- lapply(changes, FUN = function(x){
+  files <- list.files(directory, pattern = x)
+  return(files[grep(".csv",files)])
+})
+
+cayley.files <- lapply(changes, FUN = function(x){
+  files <- list.files(directory, pattern = x)
+  return(files[grep(".csv",files)])
+})
+
+cayley.changes.files <- unlist(lapply(changes, FUN = function(x){
+  files <- list.files(directory, pattern = x)
+  if (x!="noChange"){
+    new.files <- lapply(cayley, FUN = function(Cay){
+      files <- files[grep(Cay,files)]
+      return(files[grep(".csv",files)])
+    })
+  }else{
+    new.files <- list(files[grep(".csv",files)])
+  }
+  return(new.files)
+}), recursive = F)
+
+cayley.changes.files <- cayley.changes.files[lengths(cayley.changes.files) > 0L]
+
+names.cayley.changes <- mixedsort(apply(expand.grid(changes, cayley), 1, paste, collapse = "-", sep = ""))[-grep("noChange*",sort(apply(expand.grid(changes, cayley), 1, paste, collapse = "-", sep = "")))]
+names.cayley.changes <- append(names.cayley.changes,"noChange")
 # Run performance measures
 
-run.by <- cooling.param
-
-best.of.gen <- sapply(run.by, FUN = function(x){
-  files <- list.files(directory, pattern = x)
-  progress.files <- files[grep(".csv",files)]
-  return(F.best.of.gen(progress.files))
+best.of.gen <- sapply(cooling.files, FUN = function(x){
+  return(F.best.of.gen(x))
 })
 
 rank.bog <- rank(best.of.gen)
 
-mean.ARR <- sapply(run.by, FUN = function(x){
-  files <- list.files(directory, pattern = x)
-  progress.files <- files[grep(".csv",files)]
-  ARR <- F.ARR(progress.files, optimums)
-  return(mean(ARR))
+mean.ARR <- sapply(cooling.files, FUN = function(x){
+  return(mean(F.ARR(x, optimums)))
 })
 
 rank.ARR <- rank(-mean.ARR) # DESCENDING ORDER
 
-relative.ratio <- sapply(run.by, FUN = function(x){
-  files <- list.files(directory, pattern = x)
-  progress.files <- files[grep(".csv",files)]
-  return(F.relative.ratio(progress.files,optimums))
+relative.ratio <- sapply(cooling.files, FUN = function(x){
+  return(F.relative.ratio(x,optimums))
 })
 
 rank.rr <- rank(-relative.ratio)
@@ -184,9 +225,9 @@ if (is.null(isDiversityCalculated)){
 }else{
   distance.based.measure <- sapply(run.by, FUN = function(x){
     files <- list.files(directory, pattern = x)
-    progress.files <- files[grep(".csv",files)]
-    n <- as.integer(sub("[a-z]*","",unlist(strsplit(progress.files[1],"-"))[grep("n[0-9]+",unlist(strsplit(progress.files[1],"-")))]))
-    return(F.distance.based.measure(progress.files,n))
+    results.files <- files[grep(".csv",files)]
+    n <- as.integer(sub("[a-z]*","",unlist(strsplit(results.files[1],"-"))[grep("n[0-9]+",unlist(strsplit(results.files[1],"-")))]))
+    return(F.distance.based.measure(results.files,n))
   })
   
   rank.dbm <- rank(-distance.based.measure)
@@ -199,7 +240,11 @@ if (is.null(isDiversityCalculated)){
   df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, rank.rr,distance.based.measure, rank.dbm, average.rank)
 }
 
+# Order by the average of the ranks
 df.pm <- df.pm[order(df.pm$average.rank),]
+row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
 dir.name <- substr(getwd(),nchar(dirname(getwd()))+2,nchar(getwd()))
+
+# Write he data frame on a .csv file
 write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/",dir.name,".csv") ,row.names = TRUE)
 closeAllConnections()
