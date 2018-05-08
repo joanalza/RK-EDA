@@ -126,7 +126,7 @@ F.distance.based.measure <- function(files, n){
 }
 
 ## MAIN ####
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai50/tai50_10/"
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai100/tai100_20/"
 # directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/tai100_10_0/Cayley 90/"
 setwd(directory)
 
@@ -195,56 +195,37 @@ names.cayley.changes <- mixedsort(apply(expand.grid(changes, cayley), 1, paste, 
 names.cayley.changes <- append(names.cayley.changes,"noChange")
 # Run performance measures
 
-best.of.gen <- sapply(cooling.files, FUN = function(x){
+best.of.gen <- sapply(cayley.changes.files, FUN = function(x){
   return(F.best.of.gen(x))
 })
 
 rank.bog <- rank(best.of.gen)
 
-mean.ARR <- sapply(cooling.files, FUN = function(x){
+mean.ARR <- sapply(cayley.changes.files, FUN = function(x){
   return(mean(F.ARR(x, optimums)))
 })
 
 rank.ARR <- rank(-mean.ARR) # DESCENDING ORDER
 
-relative.ratio <- sapply(cooling.files, FUN = function(x){
+relative.ratio <- sapply(cayley.changes.files, FUN = function(x){
   return(F.relative.ratio(x,optimums))
 })
 
 rank.rr <- rank(-relative.ratio)
 
-isDiversityCalculated <- names(read.csv(files.progress[1])=="diversity")
+df.ranks <- data.frame(rank.bog,rank.ARR, rank.rr)
 
-if (is.null(isDiversityCalculated)){
-  df.ranks <- data.frame(rank.bog,rank.ARR, rank.rr)
-  
-  average.rank <- apply(df.ranks,1,mean)
-  
-  # Get results as csv
-  df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, rank.rr, average.rank)
-}else{
-  distance.based.measure <- sapply(run.by, FUN = function(x){
-    files <- list.files(directory, pattern = x)
-    results.files <- files[grep(".csv",files)]
-    n <- as.integer(sub("[a-z]*","",unlist(strsplit(results.files[1],"-"))[grep("n[0-9]+",unlist(strsplit(results.files[1],"-")))]))
-    return(F.distance.based.measure(results.files,n))
-  })
-  
-  rank.dbm <- rank(-distance.based.measure)
-  
-  df.ranks <- data.frame(rank.bog,rank.ARR, rank.rr, rank.dbm)
-  
-  average.rank <- apply(df.ranks,1,mean)
-  
-  # Get results as csv
-  df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, rank.rr,distance.based.measure, rank.dbm, average.rank)
-}
+average.rank <- apply(df.ranks,1,mean)
+
+# Get results as csv
+df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, rank.rr, average.rank)
 
 # Order by the average of the ranks
 df.pm <- df.pm[order(df.pm$average.rank),]
-row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
+# row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
+row.names(df.pm) <- names.cayley.changes[as.numeric(row.names(df.pm))]
 dir.name <- substr(getwd(),nchar(dirname(getwd()))+2,nchar(getwd()))
 
 # Write he data frame on a .csv file
-write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/",dir.name,".csv") ,row.names = TRUE)
+write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/Cluster/",dir.name,".csv") ,row.names = TRUE)
 closeAllConnections()

@@ -1,13 +1,13 @@
 
 # Put instance results in the directory
-directory <- "C:/Project/Code/DynamicOptimizationProblems/results/cluster/tai50_20/"
-setwd("C:/Project/Code/DynamicOptimizationProblems/plots/cluster/tai50_20/")
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai100/tai100_20/"
+setwd("C:/Project/Code/RKEDAC++/plots/cluster/tai100/tai100_20/")
 
 # Get instance names
 instances <- list.files(directory, pattern = "*.csv")
 
 # Get optimums
-optimums <- read.csv("C:/Project/Code/DynamicOptimizationProblems/data/optimums/optimum.csv")
+optimums <- read.csv("C:/Project/Code/RKEDAC++/optimums/optimum.csv")
 
 apply(as.array(instances), MARGIN = 1, FUN = function(instance){
   df <- read.csv(paste0(directory,"/",instance), header = TRUE)
