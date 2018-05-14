@@ -160,9 +160,9 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 			ichange++;
 		}
 
-//		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
-//				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
-//				<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
+		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
+				<< avgFitness << "\t" << bestSolution->getFitness() << "\t\t" << improvement << "\t" << stdev << "\t" << ichange
+				<< "\t" << genChange << "\t" << bestChange->getFitness() << endl;
 		results += to_string(static_cast<long long>(gen+1)) + "," + to_string(static_cast<long long>(noOfEvals)) + "," +
 					std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "," +
 					std::to_string(static_cast<long double>(avgFitness)) + "," +
@@ -178,18 +178,24 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		double* matrix = new double[m_problemSize];
 		matrix = m_e.getPM(pop, m_truncationSize, m_problemSize);
 
+		bool isfirst = true;
 		for (int j = 0; j < m_populationSize; j++) {
-
-			double* childAct = new double[m_problemSize];
-			for (int x = 0; x < m_problemSize; x++) {
-				mean = matrix[x];
-				childAct[x] = random->normal(stdev) + mean;
+			RK* child;
+			if (isfirst && m_elitism) {
+				child = bestSolutionOfPopulation->Clone2();
+				isfirst = false;
+			}else{
+				double* childAct = new double[m_problemSize];
+				for (int x = 0; x < m_problemSize; x++) {
+					mean = matrix[x];
+					childAct[x] = random->normal(stdev) + mean;
+				}
+				child = new RK(childAct, m_problemSize);
+				child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
+				child->normalise();
+				child->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
+				noOfEvals++;
 			}
-			RK* child = new RK(childAct, m_problemSize);
-			child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
-			child->normalise();
-			child->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
-			noOfEvals++;
 
 			if (noOfEvals >= m_FEs) {
 				break;

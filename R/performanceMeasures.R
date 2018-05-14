@@ -126,7 +126,7 @@ F.distance.based.measure <- function(files, n){
 }
 
 ## MAIN ####
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai100/tai100_20/"
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/CoolingSetting/tai200_10_0/Cayley180/"
 # directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/tai100_10_0/Cayley 90/"
 setwd(directory)
 
@@ -193,21 +193,22 @@ cayley.changes.files <- cayley.changes.files[lengths(cayley.changes.files) > 0L]
 
 names.cayley.changes <- mixedsort(apply(expand.grid(changes, cayley), 1, paste, collapse = "-", sep = ""))[-grep("noChange*",sort(apply(expand.grid(changes, cayley), 1, paste, collapse = "-", sep = "")))]
 names.cayley.changes <- append(names.cayley.changes,"noChange")
+
 # Run performance measures
 
-best.of.gen <- sapply(cayley.changes.files, FUN = function(x){
+best.of.gen <- sapply(cooling.files, FUN = function(x){
   return(F.best.of.gen(x))
 })
 
 rank.bog <- rank(best.of.gen)
 
-mean.ARR <- sapply(cayley.changes.files, FUN = function(x){
+mean.ARR <- sapply(cooling.files, FUN = function(x){
   return(mean(F.ARR(x, optimums)))
 })
 
 rank.ARR <- rank(-mean.ARR) # DESCENDING ORDER
 
-relative.ratio <- sapply(cayley.changes.files, FUN = function(x){
+relative.ratio <- sapply(cooling.files, FUN = function(x){
   return(F.relative.ratio(x,optimums))
 })
 
@@ -222,10 +223,10 @@ df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, r
 
 # Order by the average of the ranks
 df.pm <- df.pm[order(df.pm$average.rank),]
-# row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
-row.names(df.pm) <- names.cayley.changes[as.numeric(row.names(df.pm))]
+row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
+# row.names(df.pm) <- names.cayley.changes[as.numeric(row.names(df.pm))]
 dir.name <- substr(getwd(),nchar(dirname(getwd()))+2,nchar(getwd()))
 
 # Write he data frame on a .csv file
-write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/Cluster/",dir.name,".csv") ,row.names = TRUE)
+write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/",dir.name,".csv") ,row.names = TRUE)
 closeAllConnections()

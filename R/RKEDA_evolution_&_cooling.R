@@ -1,7 +1,7 @@
 
 # Put instance results in the directory
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/tai100/tai100_20/"
-setwd("C:/Project/Code/RKEDAC++/plots/cluster/tai100/tai100_20/")
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/Elitism 1/tai20/tai20_5/"
+setwd("C:/Project/Code/RKEDAC++/plots/cluster/tai20/tai20_5/")
 
 # Get instance names
 instances <- list.files(directory, pattern = "*.csv")
@@ -21,7 +21,7 @@ apply(as.array(instances), MARGIN = 1, FUN = function(instance){
   layout(matrix(c(1,2), ncol = 1))
   
   # Progress
-  plot(x =df$gen, y = df$bestFit, 
+  plot(x =df$gen, y = df$bestPerChange, 
        cex.lab=0.8, ylab = "Fitness", xlab = "Generation", type = "l", 
        #xlim = c(0,50000), 
        ylim = c(optima, max(df$avgFit)*1.1)
