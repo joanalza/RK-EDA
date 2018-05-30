@@ -1,7 +1,7 @@
 
 # Put instance results in the directory
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/Elitism 1/tai20/tai20_5/"
-setwd("C:/Project/Code/RKEDAC++/plots/cluster/tai20/tai20_5/")
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/CoolingSetting/tai200_10_0/New test/Cayley 180/"
+setwd("C:/Project/Code/RKEDAC++/plots/cluster/Cooling/tai200/")
 
 # Get instance names
 instances <- list.files(directory, pattern = "*.csv")
@@ -24,7 +24,7 @@ apply(as.array(instances), MARGIN = 1, FUN = function(instance){
   plot(x =df$gen, y = df$bestPerChange, 
        cex.lab=0.8, ylab = "Fitness", xlab = "Generation", type = "l", 
        #xlim = c(0,50000), 
-       ylim = c(optima, max(df$avgFit)*1.1)
+       ylim = c(min(df$bestFound), max(df$avgFit)*1.1)
        )
   title(main = paste0("Behaviour of the fitness during the execution of ", name))
   lines(x = df$gen, y = df$avgFit, lty=2, col = "red")
