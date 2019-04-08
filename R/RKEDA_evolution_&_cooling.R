@@ -1,7 +1,8 @@
 
 # Put instance results in the directory
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/CoolingSetting/tai200_10_0/New test/Cayley 180/"
-setwd("C:/Project/Code/RKEDAC++/plots/cluster/Cooling/tai200/")
+# directory <- "C:/Project/Code/RKEDAC++/results/cluster/CoolingSetting/tai200_10_0/New test/Cayley 180/"
+directory <- "H:/Desktop/"
+setwd("C:/Project/Code/RKEDAC++/plots/")
 
 # Get instance names
 instances <- list.files(directory, pattern = "*.csv")

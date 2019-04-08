@@ -1,4 +1,4 @@
-///* 
+///*
 // * File:   main.cpp
 // * Author: mayowaayodele
 // *
@@ -14,20 +14,20 @@
 //#include "RK.h"
 
 #include "Tools.h"
-#include "RK.h"
 #include "DPFSP.h"
+#include "RK.h"
 using namespace std;
-#include <stdio.h> 
+#include <stdio.h>
 #include <iostream>     // std::cout
 #include <algorithm>    // std::sort
 #include <vector>       // std::vector
 #include "EDAUtils.h"
-#include "RKEDA.h"
+#include "DRKEDA.h"
 
 int main(int argc, char* argv[]) {
 
 	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs;
-	int populationSize, FEs, truncSize, elitism;
+	int populationSize, FEs, truncSize, elitism, restart;
 	double minTemp, heating;
 	unsigned long seed;
 
@@ -69,13 +69,16 @@ int main(int argc, char* argv[]) {
 		temp = argv[13];
 		stringstream(temp) >> seed;
 
+		temp = argv[14];
+		stringstream(temp) >> restart;
+
 	} else {
 
 //		cout << "Without arguments" << endl;
 //		string input = "500 ./taillard_instances/ tai50_5_0.fsp 220712150 50 0 0.05 ./results/ tai50_5_0P500T50V0.06e0run0.txt ";
 
-//		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 0.06 5";
-		string input = "200 taillard_instances/ tai20_10_0.fsp dynamic/ dynProfile-n20-c10-Cayley3.txt -1 5 1 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 0.2 1 ";
+		string input = "200 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-C2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 0.06 5 0";
+//		string input = "200 taillard_instances/ tai20_5_9.fsp dynamic/ dynProfile-n20-c10-Cayley10.txt 4000000 20 0 0.15 results/ tai20_5_9-dynProfile-n20-c10-Cayley10-currentbest_0.15-elt0--9 9 0";
 //		string input = "500 taillard_instances/ tai50_10_0.fsp dynamic/ dynProfile-n50-c10-Cayley45.txt -1 5 0 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 0.2 1 ";
 
 
@@ -126,6 +129,9 @@ int main(int argc, char* argv[]) {
 		temp = input.substr(pos[11] + 1, pos[12] - (pos[11] + 1));
 		stringstream(temp) >> seed;
 
+		temp = input.substr(pos[12] + 1, pos[13] - (pos[12] + 1));
+		stringstream(temp) >> restart;
+
 		pos.clear();
 	}
 
@@ -133,7 +139,7 @@ int main(int argc, char* argv[]) {
 	dynamicPath = dynamicFolder + dynamicName;
 	resultsPath = resultsFolder + saveAs;
 
-	RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, seed);
+	DRKEDA* rkeda = new DRKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, seed, restart);
 	rkeda->runAlgorithm(minTemp, heating);
 
 	return 0;

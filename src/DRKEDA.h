@@ -9,30 +9,31 @@
 #define	RKEDA_H
 #include <iostream>
 #include "EDAUtils.h"
-#include "LinearCooling.h"
+#include "AziziAdaptativeCooling.h"
 #include "DPFSP.h"
 using namespace std;
 
-class RKEDA {
+class DRKEDA {
 public:
 
-    RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed);
+    DRKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed, int restart);
 
 //    void setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run);
-    void runAlgorithm(double initialTemp);
+    void runAlgorithm(double minTemp, double heating);
 
     int m_problemSize;
     int m_populationSize;
     int m_truncationSize;
     double m_elitism;
     int m_FEs;
+    int m_restart;
     string m_fileName;
     string m_dynamicPath;
     string m_resultsPath;
     EDAUtils m_e;
     PFSP m_fsp;
     DPFSP m_dfsp;
-    LinearCooling m_cooling;
+    AziziAdaptativeCooling m_cooling;
 	unsigned long m_seed;
 private:
 

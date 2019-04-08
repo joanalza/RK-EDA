@@ -185,8 +185,31 @@ int DPFSP::getNumberofEvaluation(){
 	return m_evaluations;
 }
 
+double DPFSP::getChangeStep(int changePeriod){
+	return m_idenityChangesPercentage[changePeriod - 1];
+}
+
 int DPFSP::getProblemSize(){
 	return(m_jobs);
+}
+
+string DPFSP::getDistance(string dynamic){
+	size_t extension = dynamic.find_last_of(".");
+	size_t distIndex = dynamic.find_last_of("-");
+	string rawname = dynamic.substr(distIndex + 1, extension - distIndex - 1);
+	return rawname.substr(0, rawname.length());
+}
+
+string DPFSP::getDistanceType(string dynamic){
+	string metric;
+	int value;
+	string distance = getDistance(dynamic);
+	return distance.substr(0, 1);
+}
+
+string DPFSP::getDistanceMagnitude(string dynamic){
+	string distance = getDistance(dynamic);
+	return distance.substr(1, distance.length());
 }
 
 void DPFSP::setIdentityPermutationChanges(){

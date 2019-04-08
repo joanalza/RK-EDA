@@ -5,12 +5,13 @@
  * Created on 13 February 2017, 22:09
  */
  //#include "stdafx.h"
-#include "RKEDA.h"
+#include "DRKEDA.h"
 
 #include "EDAUtils.h"
 #include "Tools.h"
 #include "PFSP.h"
 #include "srandom.h"
+#include "AziziAdaptativeCooling.h"
 #include "LinearCooling.h"
 //#include "random.h"
 
@@ -21,7 +22,7 @@
 #include <stdio.h>      /* printf */
 #include <math.h>       /* pow */
 
-RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed){
+DRKEDA::DRKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed, int restart){
 	m_populationSize = popSize;
 	m_fileName = problemPath;
 	m_dynamicPath = dynamicPath;
@@ -30,6 +31,7 @@ RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int
 	m_elitism = elitism;
 	m_resultsPath = results;
 	m_seed = theseed;
+	m_restart = restart;
 
     m_problemSize = 0;
 }
@@ -71,16 +73,20 @@ RKEDA:: RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int
 }*/
 
 
-void RKEDA::runAlgorithm(double initialTemp) {
+void DRKEDA::runAlgorithm(double minTemp, double heating) {
 
 	// Initialization of the space
-
-
-
 	RK *bestSolution, *previousBest, *bestSolutionOfPopulation, *bestChange;
 	//m_problemSize = m_fsp.ReadInstance(m_fileName);
 	m_problemSize = m_dfsp.ReadTaillardInstance(m_fileName, m_dynamicPath);
 	//m_dfsp.setIdentityPermutationChanges();
+	string distance = m_dfsp.getDistanceType(m_dynamicPath);
+	string distanceNumber = m_dfsp.getDistanceMagnitude(m_dynamicPath);
+	string algorithm = "";
+	if (m_restart == 0)
+		algorithm = "d";
+	else
+		algorithm = "r";
 
 	vector<RK*> pop(m_populationSize);
 	vector<RK*> population(m_populationSize);
@@ -100,12 +106,12 @@ void RKEDA::runAlgorithm(double initialTemp) {
 		m_FEs = 1000 * pow(m_problemSize,2); // Evaluations = 1000 * n^2
 	}
 
+	int maxGens = m_FEs / m_populationSize;
+
 	int noOfEvals = 0;
 
 	int improvement = 0;
 
-	LinearCooling* cooling = new LinearCooling(initialTemp, (int) m_FEs / m_populationSize);
-	double stdev = cooling->getNewTemperature(improvement);
 	time_t  starttime = time(0);
 
 	srand(m_seed);
@@ -114,7 +120,7 @@ void RKEDA::runAlgorithm(double initialTemp) {
 
 
 	//string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
-	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprovementCounter,sd,change,changeGen,bestPerChange\n";
+	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprovementCounter,sd,change,changeGen,bestPerChange,run,version,distance,distNumber\n";
 
 
 	// Initialize the first population
@@ -145,15 +151,24 @@ void RKEDA::runAlgorithm(double initialTemp) {
 
 	int gen = 0, ichange = 1, genChange = 1;
 
+	heating = maxGens * m_dfsp.getChangeStep(ichange);
+	LinearCooling *cooling = new LinearCooling(minTemp, heating);
+	double stdev = cooling->currentTemp;
+
 	// Iterative process
 	do/*for (int i = 0; i < numberofGenerations; i++)*/ {
 
 		// Check if a change has occurred and change it if so
-		bool changed = m_dfsp.changeIdentityPermutation(noOfEvals, m_FEs);
+		bool changed = m_dfsp.changeIdentityPermutation(gen, maxGens);
 		if(changed){
 			genChange = 1;
-			for (int i = 0; i < m_populationSize; i++) {
-
+			if (m_restart == 0){
+				for(int i=0; i< m_populationSize; i++){
+					pop.at(i)->fitness = m_dfsp.EvaluateFSPTotalFlowtime(pop.at(i)->permutation);
+					cout <<  "D " << pop.at(i)->getPermutationAsString() << endl;
+				}
+			} else {
+				for(int i=0; i< m_populationSize; i++){
 					// Create the random keys of the individuals
 					double* childAct = new double[m_problemSize];
 					for (int x = 0; x < m_problemSize; x++) {
@@ -165,15 +180,22 @@ void RKEDA::runAlgorithm(double initialTemp) {
 					child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
 					child->normalise();
 					child->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
-					cout <<  child->getPermutationAsString() << endl;
+					cout << "R " << child->getPermutationAsString() << endl;
 					noOfEvals++;
 					pop[i] = (child);
+				}
+//				cooling = new AziziAdaptativeCooling(minTemp, heating);
 			}
+			cout << noOfEvals << "; " << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
 			bestSolutionOfPopulation = m_e.getBestSolutionMin(pop);
 			avgFitness = m_e.getPopulationAverageFitness(pop);
 			bestChange = m_e.getBestSolutionMin(pop);
-			cooling = new LinearCooling(initialTemp, (int) m_FEs / m_populationSize);
 			ichange++;
+			if (ichange> m_dfsp.m_changes)
+				heating = maxGens;
+			else
+				heating = maxGens * m_dfsp.getChangeStep(ichange);
+			cooling = new LinearCooling(minTemp, heating);
 		}
 
 		cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
@@ -186,7 +208,9 @@ void RKEDA::runAlgorithm(double initialTemp) {
 					to_string(static_cast<long long>(improvement)) + "," +
 					std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +
 					"," + to_string(static_cast<long long>(genChange)) + "," +
-					std::to_string(static_cast<long double>(bestChange->getFitness())) +"\n";
+					std::to_string(static_cast<long long>(bestChange->getFitness())) + "," +
+					std::to_string(static_cast<long double>(m_seed)) + "," +
+					algorithm +"," + distance + "," + distanceNumber + "\n";
 
 
 //		results1 = m_fileName + "\t" + m_e.perm2str(bestSolution->getPermutation(), m_problemSize) + "\t" + std::to_string(static_cast<long double>(bestSolution->getFitness())) + "\t" + "0" + "\t" + to_string(static_cast<long long>(noOfEvals)) + "\n"; // ##C++0x
@@ -213,9 +237,9 @@ void RKEDA::runAlgorithm(double initialTemp) {
 				noOfEvals++;
 			}
 
-			if (noOfEvals >= m_FEs) {
-				break;
-			}
+//			if (noOfEvals >= m_FEs) {
+//				break;
+//			}
 			population[j] = child;
 			// OVERALL
 			if (bestSolution->getFitness() > child->getFitness()) {
@@ -257,7 +281,7 @@ void RKEDA::runAlgorithm(double initialTemp) {
 
 		delete[] matrix;
 
-	} while(noOfEvals < m_FEs);
+	} while(gen < maxGens);
 
 
 //	cout << (gen+1) << "\t" << noOfEvals << "\t" << bestSolutionOfPopulation->getFitness() << "\t"
@@ -270,7 +294,9 @@ void RKEDA::runAlgorithm(double initialTemp) {
 				to_string(static_cast<long long>(improvement)) + "," +
 				std::to_string(static_cast<long double>(stdev)) + "," + to_string(static_cast<long long>(ichange)) +
 				"," + to_string(static_cast<long long>(genChange)) + "," +
-				std::to_string(static_cast<long double>(bestChange->getFitness())) +"\n";
+				std::to_string(static_cast<long long>(bestChange->getFitness())) + "," +
+				std::to_string(static_cast<long double>(m_seed)) + "," +
+				algorithm +"," + distance + "," + distanceNumber + "\n";
 
 
 	time_t  endtime = time(0);

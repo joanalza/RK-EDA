@@ -41,6 +41,10 @@ public:
 	int EvaluateFSPTotalFlowtime(int * genes);
 	int getNumberofEvaluation();
 	int getProblemSize();
+	double getChangeStep(int changePeriod);
+	string getDistance(string dynamic);
+	string getDistanceType(string dynamic);
+	string getDistanceMagnitude(string dynamic);
 	void setIdentityPermutationChanges();
 	bool changeIdentityPermutation(int fes, int maxfes);
 

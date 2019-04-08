@@ -126,8 +126,8 @@ F.distance.based.measure <- function(files, n){
 }
 
 ## MAIN ####
-directory <- "C:/Project/Code/RKEDAC++/results/cluster/Elitism 1/tai50/tai50_5/"
-# directory <- "C:/Project/Code/RKEDAC++/results/cluster/SEED_1/tai100_10_0/Cayley 90/"
+directory <- "C:/Project/Code/RKEDAC++/results/cluster/CoolingSetting/tai500_20_0/Cayley250/"
+# directory <- "C:/Project/Code/RKEDAC++/results/cluster/Elitism 1/tai50/tai50_5/"
 setwd(directory)
 
 # Get files
@@ -222,25 +222,25 @@ names.global <- sapply(global.files, FUN = function (x){
 
 # Run performance measures
 
-# best.of.gen <- sapply(cooling.files, FUN = function(x){
+best.of.gen <- sapply(cooling.files, FUN = function(x){
 # best.of.gen <- sapply(cayley.changes.files, FUN = function(x){
-best.of.gen <- sapply(global.files, FUN = function(x){
+# best.of.gen <- sapply(global.files, FUN = function(x){
   return(F.best.of.gen(x))
 })
 
 rank.bog <- rank(best.of.gen)
 
-# mean.ARR <- sapply(cooling.files, FUN = function(x){
+mean.ARR <- sapply(cooling.files, FUN = function(x){
 # mean.ARR <- sapply(cayley.changes.files, FUN = function(x){
-mean.ARR <- sapply(global.files, FUN = function(x){
+# mean.ARR <- sapply(global.files, FUN = function(x){
   return(mean(F.ARR(x, optimums)))
 })
 
 rank.ARR <- rank(-mean.ARR) # DESCENDING ORDER
 
-# relative.ratio <- sapply(cooling.files, FUN = function(x){
+relative.ratio <- sapply(cooling.files, FUN = function(x){
 # relative.ratio <- sapply(cayley.changes.files, FUN = function(x){
-relative.ratio <- sapply(global.files, FUN = function(x){
+# relative.ratio <- sapply(global.files, FUN = function(x){
   return(F.relative.ratio(x,optimums))
 })
 
@@ -255,11 +255,11 @@ df.pm <- data.frame(best.of.gen, rank.bog, mean.ARR, rank.ARR, relative.ratio, r
 
 # Order by the average of the ranks
 df.pm <- df.pm[order(df.pm$average.rank),]
-# row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
+row.names(df.pm) <- cooling.param[as.numeric(row.names(df.pm))]
 # row.names(df.pm) <- names.cayley.changes[as.numeric(row.names(df.pm))]
-row.names(df.pm) <- names.global[as.numeric(row.names(df.pm))]
+# row.names(df.pm) <- names.global[as.numeric(row.names(df.pm))]
 dir.name <- substr(getwd(),nchar(dirname(getwd()))+2,nchar(getwd()))
 
 # Write he data frame on a .csv file
-write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/Cluster/Elitism 1/Global/RK-",dir.name,".csv") ,row.names = TRUE)
+write.csv(df.pm, paste0("C:/Project/Code/RKEDAC++/performanceMeasures/CoolingSetting/tai500_10_0/",dir.name,".csv") ,row.names = TRUE)
 closeAllConnections()
