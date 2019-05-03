@@ -26,7 +26,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs;
+	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs, modeModel, modelPath;
 	int populationSize, FEs, truncSize, elitism, restart;
 	double minTemp, heating;
 	unsigned long seed;
@@ -62,6 +62,10 @@ int main(int argc, char* argv[]) {
 		saveAs= argv[11];
 		saveAs.insert(0,"progress-");
 		saveAs.append(".csv");
+
+		modeModel = argv[11];
+		modeModel.insert(0, "modelQuality-");
+		modeModel.append(".csv");
 
 		temp = argv[12];
 		stringstream(temp) >> heating;
@@ -138,8 +142,9 @@ int main(int argc, char* argv[]) {
 	filePath = fileDirectory + fileName;
 	dynamicPath = dynamicFolder + dynamicName;
 	resultsPath = resultsFolder + saveAs;
+	modelPath = resultsFolder + modeModel;
 
-	DRKEDA* rkeda = new DRKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, seed, restart);
+	DRKEDA* rkeda = new DRKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, modelPath, seed, restart);
 	rkeda->runAlgorithm(minTemp, heating);
 
 	return 0;

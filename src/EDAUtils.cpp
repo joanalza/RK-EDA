@@ -290,5 +290,34 @@ string EDAUtils::perm2str(int* p, int n) {
     return s;
 }
 
+// Function definition for lowest value
+double EDAUtils::lowest(double* array, int size){
+	double min; // min is of type FLOAT
+	min = array[0]; // min is the 0th element
 
+	for (int i=0; i <size;i++)
+	{
+		if( array[i] < min) // if i-th element is less than min
+		{
+			min = array[i]; // make that our new min
+		}
+	}
+	return min;
+}
+
+
+// Function definition for highest value
+double EDAUtils::highest(double* array, int size){
+	double max; // max is of type FLOAT
+	max = array[0]; // max is the 0th element
+
+	for (int i=0; i <size;i++)
+	{
+		if( array[i] > max) // if i-th element is less than max
+		{
+			max = array[i]; // make that our new max
+		}
+	}
+	return max;
+}
 

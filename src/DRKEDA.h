@@ -16,7 +16,7 @@ using namespace std;
 class DRKEDA {
 public:
 
-    DRKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed, int restart);
+    DRKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, std::string modelPath, unsigned long theseed, int restart);
 
 //    void setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run);
     void runAlgorithm(double minTemp, double heating);
@@ -30,6 +30,7 @@ public:
     string m_fileName;
     string m_dynamicPath;
     string m_resultsPath;
+    string m_modelPath;
     EDAUtils m_e;
     PFSP m_fsp;
     DPFSP m_dfsp;

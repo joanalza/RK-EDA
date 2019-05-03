@@ -31,6 +31,8 @@ public:
     int* randomKeyToAL(double priorities[], int pSize);
 
     double Variance(double* array, int num);
+    double lowest(double* array, int size);
+    double highest(double* array, int size);
     string perm2str(int* p, int n);
 
 private:
