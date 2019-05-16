@@ -40,6 +40,7 @@ public:
 	double EvaluateFSPMakespan(int * genes);
 	int EvaluateFSPTotalFlowtime(int * genes);
 	int getNumberofEvaluation();
+	int* getIdentityPermutation(int period);
 	int getProblemSize();
 	double getChangeStep(int changePeriod);
 	string getDistance(string dynamic);

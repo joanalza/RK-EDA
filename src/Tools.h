@@ -17,23 +17,23 @@ public:
     Tools();
     Tools(const Tools& orig);
     virtual ~Tools();
-    double Mean(int* array, int num);
-    double Variance(int* array, int num);
-    double Mean(double* array, int num);
-    double Variance(double* array, int num);
-    void printarray(int perm[], int length);
-
-    void printarray(double perm[], int length);
-
-    char* double2str(double n, char* s);
-    char* perm2str(int* p, int n, char* s);
-    char* perm2str(int* p, int n);
-    char* perm2str(std::vector<int> p, int n);
-    char* rk2str(double* p, int n);
-    char* rk2str(std::vector<double> p, int n);
-    int* randomKeyToAL(double priorities[], int pSize);
-    bool strContains(const string inputStr, const string searchStr);
-	vector<string> split(string str);
+    static double Mean(int* array, int num);
+    static double Variance(int* array, int num);
+    static double Mean(double* array, int num);
+    static double Variance(double* array, int num);
+    static void printarray(int perm[], int length);
+    static void printarray(double perm[], int length);
+    static void PrintArray(int* array, int length, string text);
+    static char* double2str(double n, char* s);
+    static char* perm2str(int* p, int n, char* s);
+    static char* perm2str(int* p, int n);
+    static char* perm2str(std::vector<int> p, int n);
+    static char* rk2str(double* p, int n);
+    static char* rk2str(std::vector<double> p, int n);
+    static int* randomKeyToAL(double priorities[], int pSize);
+    static bool strContains(const string inputStr, const string searchStr);
+    static vector<string> split(string str);
+    static void Invert(int*permu, int n, int* inverted);
 
 private:
 

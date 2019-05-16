@@ -282,10 +282,10 @@ double EDAUtils::Variance(double* array, int num) {
 //}
 
 string EDAUtils::perm2str(int* p, int n) {
-    string s = "";
+    string s = std::to_string(static_cast<long long>(p[0]));
     for (int i = 1; i < n; i++) {
 		//s += std::to_string(p[i]) + ","; // ##C++11
-        s+=std::to_string(static_cast<long long>(p[i])) +","; // ##C++0x
+        s+= "," + std::to_string(static_cast<long long>(p[i])) ; // ##C++0x
     }
     return s;
 }

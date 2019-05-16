@@ -143,3 +143,16 @@ string RK::getPermutationAsString() {
 	return out;
 }
 
+string RK::getRandomKeyAsString() {
+	string out = t.rk2str(randomkeys, pSize);
+
+	/*string out = "";
+	for (int i = 0; i < pSize; i++) {
+		out = out + permutation[i];
+		if (i < pSize - 1)
+			out = out+ ",";
+	}*/
+
+	return out;
+}
+

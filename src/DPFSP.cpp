@@ -143,26 +143,25 @@ double DPFSP::EvaluateFSPMakespan(int *genes){
 int DPFSP::EvaluateFSPTotalFlowtime(int *genes){
 	m_evaluations++;
 	int *timeTable = new int[m_machines];
-	// int[] m_aux= new int[m_jobs];
-
-	for (int i = 0; i < m_machines; i++)
-		timeTable[i] = 0;
-
-	int j, z, job;
+	int i, j, z, job, first_gene, fitness;
 	int machine;
 	int prev_machine = 0;
+	// int[] m_aux= new int[m_jobs];
+
+	for (i = 0; i < m_machines; i++)
+		timeTable[i] = 0;
 
 	// int first_gene=genes[0];
-	int first_gene = m_identityPermutation[genes[0]];
+	first_gene = m_identityPermutation[genes[0]];
 
 	timeTable[0] = m_processing_matrix[0][first_gene];
 	for (j = 1; j < m_machines; j++) {
 		timeTable[j] = timeTable[j - 1] + m_processing_matrix[j][first_gene];
 	}
 
-	int fitness = timeTable[m_machines - 1];
+	fitness = timeTable[m_machines - 1];
 	for (z = 1; z < m_jobs; z++) {
-		 job=genes[z];
+		job = genes[z];
 		job = m_identityPermutation[genes[z]];
 
 		// machine 0 is always incremental, so:
@@ -271,4 +270,8 @@ bool DPFSP::changeIdentityPermutation(int fes, int maxfes){
 		}
 	}
 	return hasChangedOccured;
+}
+
+int* DPFSP::getIdentityPermutation(int period){
+	return m_identityPermutations[period];
 }

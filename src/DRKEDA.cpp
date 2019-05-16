@@ -48,7 +48,7 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 	double* childAct, *matrix;
 	int maxGens = m_FEs / m_populationSize, noOfEvals = 0, improvement = 0;
 	Random *random;
-	time_t  starttime = time(0);
+	clock_t  starttime = clock();
 	vector<RK*> pop(m_populationSize);
 	vector<RK*> population(m_populationSize);
 	int i, j, x;
@@ -83,7 +83,8 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 	//string results1 = "FileName \t Solution \tFitness \t err \t FEs \n";
 //	string results = "gen,fes,bestFit,avgFit,bestFound,noCurrentImprovementCounter,sd,change,changeGen,bestPerChange,run,version,distance,distNumber,AverageKeyRange\n";
 	string results = "gen,bestFit,sd,change,changeGen,bestPerChange,AverageKeyRange,modelQuality\n";
-	string modelTracking = "Permutation;fitness\n";
+//	string modelTracking = "gen;fitness;permutation\n";
+	string landscapeInterpretation = "changePeriod;identity;permutation;fitness\n";
 
 
 	// Initialize the first population
@@ -96,11 +97,13 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 			childAct[x] = r;
 		}
 		child = new RK(childAct, m_problemSize);
+//		cout << "RK : [" << child->getRandomKeyAsString() << "]" << endl;
+
 
 		child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
 		child->normalise();
 		child->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
-		cout <<  child->getPermutationAsString() << endl;
+		cout << "RK (perm): [" << child->getPermutationAsString() << "]" << endl;
 		noOfEvals++;
 		pop[i] = (child);
 	}
@@ -124,13 +127,20 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 		// Check if a change has occurred and change it if so
 		changed = m_dfsp.changeIdentityPermutation(gen, maxGens);
 		if(changed){
+			landscapeInterpretation += to_string(static_cast<long long>(ichange)) + ";" + m_e.perm2str(m_dfsp.getIdentityPermutation(ichange - 1), m_problemSize) + ";" +
+//					to_string(static_cast<long long>(bestSolutionOfPopulation->getPermutation()[0] + 1));
+//			for (i = 1; i< m_problemSize; i++)
+//				landscapeInterpretation += "," + to_string(static_cast<long long>(bestSolutionOfPopulation->getPermutation()[i] + 1)) ;
+					m_e.perm2str(bestSolutionOfPopulation->getPermutation(), m_problemSize) +
+					std::to_string(static_cast<long double>(bestSolutionOfPopulation->getFitness())) + "\n";
 			genChange = 1;
 			ichange++;
-			cout <<  "------------------------" << ichange << "----------------------" << endl;
+			cout << landscapeInterpretation << endl;
+//			cout <<  "------------------------" << ichange << "----------------------" << endl;
 			if (m_restart == 0){
 				for(i=0; i< m_populationSize; i++){
 					pop.at(i)->fitness = m_dfsp.EvaluateFSPTotalFlowtime(pop.at(i)->permutation);
-					cout <<  "D " << pop.at(i)->getPermutationAsString() << endl;
+//					cout <<  "D " << pop.at(i)->getPermutationAsString() << endl;
 				}
 			} else {
 				for(i=0; i< m_populationSize; i++){
@@ -145,12 +155,12 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 					child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
 					child->normalise();
 					child->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(child->getPermutation()));
-					cout << "R " << child->getPermutationAsString() << endl;
+//					cout << "R " << child->getPermutationAsString() << endl;
 					noOfEvals++;
 					pop[i] = (child);
 				}
 			}
-			cout << noOfEvals << "; " << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
+			cout << noOfEvals << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << endl;
 			bestSolutionOfPopulation = m_e.getBestSolutionMin(pop);
 			avgFitness = m_e.getPopulationAverageFitness(pop);
 			bestChange = m_e.getBestSolutionMin(pop);
@@ -172,12 +182,12 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 		trackingQuality->setPermutation(m_e.randomKeyToAL(matrix, m_problemSize));
 		trackingQuality->setFitness(m_dfsp.EvaluateFSPTotalFlowtime(trackingQuality->getPermutation()));
 //		cout << trackingQuality->getFitness() << endl;
-		modelTracking += std::to_string(static_cast<long double>(trackingQuality->getFitness())) + ";";
-		for (int i = 0; i< m_problemSize; i++){
-			modelTracking += to_string(static_cast<long long>(trackingQuality->getPermutation()[i] + 1)) + ",";
-			cout <<  trackingQuality->getPermutation()[i] + 1 << endl;
-		}
-		modelTracking += "\n";
+//		modelTracking += to_string(static_cast<long long>(gen+1)) + ";" + std::to_string(static_cast<long double>(trackingQuality->getFitness())) + ";";
+//		for (i = 0; i< m_problemSize; i++){
+//			modelTracking += to_string(static_cast<long long>(trackingQuality->getPermutation()[i] + 1)) + ",";
+//			cout <<  trackingQuality->getPermutation()[i] + 1 << endl;
+//		}
+//		modelTracking += "\n";
 		muMin = m_e.lowest(matrix, m_problemSize);
 		muMax = m_e.highest(matrix, m_problemSize);
 
@@ -191,7 +201,6 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 					std::to_string(static_cast<long long>(bestChange->getFitness())) + "," +
 					std::to_string(static_cast<long double>(muMax - muMin)) + "," +
 					std::to_string(static_cast<long double>(trackingQuality->getFitness())) +  "\n";
-
 
 
 		isfirst = true;
@@ -250,6 +259,9 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 
 		delete[] matrix;
 
+		clock_t  endtime = clock();
+
+		cout << (((double) (endtime - starttime)) / CLOCKS_PER_SEC) << endl;
 	} while(gen < maxGens);
 
 
@@ -264,7 +276,7 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 				std::to_string(static_cast<long double>(muMax - muMin)) +"\n";
 
 
-	time_t  endtime = time(0);
+
 
 	ofstream myfile1;
 	myfile1.open(m_resultsPath);
@@ -273,7 +285,7 @@ void DRKEDA::runAlgorithm(double minTemp, double heating) {
 
 	ofstream myfile2;
 	myfile2.open(m_modelPath);
-	myfile2 << modelTracking;
+	myfile2 << landscapeInterpretation;
 	myfile2.close();
 
 }

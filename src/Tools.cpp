@@ -88,6 +88,18 @@ void Tools::printarray(double perm[], int length) {
     cout << '\n';
 }
 
+/*
+ * Prints in standard output 'length' integer elements of a given array.
+ */
+void Tools::PrintArray(int* array, int length, string text)
+{
+	cout<<text;
+	for (int i=0;i<length;i++){
+		cout<<array[i]<<" ";
+	}
+	cout<<" "<<endl;
+}
+
 char* Tools::perm2str(int* p, int n, char* s) {
     int PERMSTR_SIZE = 2048;
     if (!s)
@@ -252,4 +264,14 @@ vector<string> Tools::split(string str)
 
 	return ret;
 
+}
+
+/*
+ * Inverts a permutation.
+ */
+void Tools::Invert(int*permu, int n, int* inverted)
+{
+    int i;
+    for(i=0; i<n; i++)
+        inverted[permu[i]]=i;
 }

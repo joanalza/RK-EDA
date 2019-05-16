@@ -59,12 +59,13 @@ int main(int argc, char* argv[]) {
 		stringstream(temp) >> minTemp;
 
 		resultsFolder = argv[10];
+
 		saveAs= argv[11];
 		saveAs.insert(0,"progress-");
 		saveAs.append(".csv");
 
 		modeModel = argv[11];
-		modeModel.insert(0, "modelQuality-");
+		modeModel.insert(0, "landscape-");
 		modeModel.append(".csv");
 
 		temp = argv[12];

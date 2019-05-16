@@ -34,6 +34,8 @@ double* copyGene();
 
 string getPermutationAsString();
 
+string getRandomKeyAsString();
+
 RK copyOf();
 
 void normalise();
