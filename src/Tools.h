@@ -11,6 +11,7 @@
 #include <algorithm>    // std::sort
 #include <iostream>
 #include <stdio.h>
+#include <bits/stdc++.h>
 using namespace std;
 class Tools {
 public:
@@ -34,6 +35,8 @@ public:
     static bool strContains(const string inputStr, const string searchStr);
     static vector<string> split(string str);
     static void Invert(int*permu, int n, int* inverted);
+    static bool areEqual(double *arr1, double *arr2, int size1, int size2);
+    static bool areEqual(int *arr1, int *arr2, int size1, int size2);
 
 private:
 

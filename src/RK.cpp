@@ -8,6 +8,10 @@ using namespace std;
 
 //int* permutation= new int[IND_SIZE];
 
+RK::RK(){
+
+}
+
 RK::RK(double randomkeys1[], int psize) {
 	pSize = psize;
 	//randomkeys = new double[psize];

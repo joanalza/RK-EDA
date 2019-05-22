@@ -17,6 +17,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "Tools.h"
+#include "RK.h"
+#include "PBP.h"
 using std::istream;
 using std::ostream;
 using namespace std;
@@ -28,7 +30,7 @@ using std::stringstream;
 using std::string;
 
 
-class DPFSP
+class DPFSP //: public PBP
 {
 
 public:
@@ -48,6 +50,7 @@ public:
 	string getDistanceMagnitude(string dynamic);
 	void setIdentityPermutationChanges();
 	bool changeIdentityPermutation(int fes, int maxfes);
+	bool detectChange(RK *perm1, RK *perm2);
 
 	int m_jobs;
 	int m_machines;

@@ -161,7 +161,7 @@ int DPFSP::EvaluateFSPTotalFlowtime(int *genes){
 
 	fitness = timeTable[m_machines - 1];
 	for (z = 1; z < m_jobs; z++) {
-		job = genes[z];
+//		job = genes[z];
 		job = m_identityPermutation[genes[z]];
 
 		// machine 0 is always incremental, so:
@@ -257,19 +257,28 @@ void DPFSP::setIdentityPermutationChanges(){
 }
 
 bool DPFSP::changeIdentityPermutation(int fes, int maxfes){
-	bool hasChangedOccured = false;
 	if (m_nextChangeIndex < m_changes){
 		int nextChangeFes = (int)rint(m_idenityChangesPercentage[m_nextChangeIndex]*(double)maxfes);
 		if(fes>=nextChangeFes){
 			m_identityPermutation = m_identityPermutations[m_nextChangeIndex];
 			m_nextChangeIndex++;
-			cout << "##################################################" << endl;
-			cout << "[" << m_t.perm2str(m_identityPermutation, m_jobs) << "]" << endl;
-			cout << "##################################################" << endl;
-			hasChangedOccured = true;
+			return true;
 		}
 	}
-	return hasChangedOccured;
+	return false;
+}
+
+bool DPFSP::detectChange(RK *sol1,RK *sol2){
+//	cout << Tools::perm2str(sol1->getPermutation(), sol1->getProblemSize()) << "--" << sol1->getFitness() << "--" << sol1->getProblemSize() <<endl;
+//	cout << Tools::perm2str(sol2->getPermutation(), sol2->getProblemSize()) << "--" << sol2->getFitness() << "--" << sol2->getProblemSize() <<endl;
+//	cout << Tools::areEqual(sol1->getPermutation(), sol2->getPermutation(),sol1->getProblemSize(),sol2->getProblemSize()) << endl;
+	bool changed = Tools::areEqual(sol1->getPermutation(), sol2->getPermutation(),sol1->getProblemSize(),sol2->getProblemSize());
+	if (changed && (sol1->getFitness() != sol2->getFitness())){
+		m_identityPermutation = m_identityPermutations[m_nextChangeIndex];
+		m_nextChangeIndex++;
+		return true;
+	}
+	return false;
 }
 
 int* DPFSP::getIdentityPermutation(int period){

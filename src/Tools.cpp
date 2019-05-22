@@ -230,6 +230,26 @@ bool Tools::strContains(const string inputStr, const string searchStr)
 		return false;
 }
 
+// Returns true if arr1[0..n-1] and arr2[0..m-1]
+// contain same elements.
+bool Tools::areEqual(double *arr1, double *arr2, int size1, int size2)
+{
+//	if (std::equal(arr1, arr1 + sizeof arr1 / sizeof *arr1, arr2))
+	if (std::equal(arr1, arr1 + size1, arr2))
+//	if (arr1 == arr2)
+		return true;
+	return false;
+}
+
+bool Tools::areEqual(int *arr1, int *arr2, int size1, int size2)
+{
+//	if (std::equal(arr1, arr1 + sizeof arr1 / sizeof *arr1, arr2))
+	if (std::equal(arr1, arr1 + size1, arr2))
+//	if (arr1 == arr2)
+		return true;
+	return false;
+}
+
 vector<string> Tools::split(string str)
 
 {

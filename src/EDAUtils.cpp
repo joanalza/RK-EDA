@@ -48,6 +48,18 @@ vector<RK*> EDAUtils::sortPopulation(vector<RK*> pop) {
     return pop;
 }
 
+void EDAUtils::sortPop(vector<RK*> pop) {
+    std::sort(pop.begin(), pop.end(), myobject);
+}
+
+bool EDAUtils::isSortedPopulation(vector<RK*> pop){
+	for(int i=1; i< pop.size(); i++){
+		if (pop.at(i - 1)->getFitness() > pop.at(i)->getFitness())
+			return false;
+	}
+    return true;
+}
+
 RK* EDAUtils::getBestSolutionMin(vector<RK*> pop){
     RK *best = pop.at(0);
     for (int i = 1; i < pop.size(); i++) {
@@ -98,24 +110,24 @@ double* EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize)
     return matrix;
 }
 
-double* EDAUtils::getChild(double* currentModel, double stdev, int pSize) {
-    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
-    double* childAct = new double[pSize];
-    //std::default_random_engine generator; // ##C++11
-	std::minstd_rand generator; // ##C++0x
-
-    for (int x = 0; x < pSize; x++) {
-        //             double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
-        double mean = currentModel[x];
-
-        std::normal_distribution<double> distribution(mean, stdev);
-        double r2 = distribution(generator);
-//        cout << r2 << endl;
-        childAct[x] = r2;
-
-    }
-    return childAct;
-}
+//double* EDAUtils::getChild(double* currentModel, double stdev, int pSize) {
+//    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
+//    double* childAct = new double[pSize];
+//    //std::default_random_engine generator; // ##C++11
+//	std::minstd_rand generator; // ##C++0x
+//
+//    for (int x = 0; x < pSize; x++) {
+//        //             double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
+//        double mean = currentModel[x];
+//
+//        std::normal_distribution<double> distribution(mean, stdev);
+//        double r2 = distribution(generator);
+////        cout << r2 << endl;
+//        childAct[x] = r2;
+//
+//    }
+//    return childAct;
+//}
 
 //vector<double*> EDAUtils::getPopulation(double* currentModel, double stdev, int probSize, int populationSize) {
 //    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
@@ -265,16 +277,33 @@ double EDAUtils::Mean(double* array, int tSize) {
     return sum;
 }
 
-double EDAUtils::Variance(double* array, int num) {
-    double avg = Mean(array, num);
-    double var = 0;
-    for (int i = 0; i < num; i++) {
-        var += ((array [i] - avg) * (array [i] - avg));
-    }
-    var /= (num - 1);
-    return var;
+//double EDAUtils::Variance(double* array, int num) {
+//    double avg = Mean(array, num);
+//    double var = 0;
+//    for (int i = 0; i < num; i++) {
+//        var += ((array [i] - avg) * (array [i] - avg));
+//    }
+//    var /= (num - 1);
+//    return var;
+//}
+
+RK* EDAUtils::minimumSolution(RK* sol1, RK* sol2) {
+	RK *sol = new RK();
+    if(sol1->getFitness() < sol2->getFitness())
+    	sol = sol1->Clone();
+    else
+    	sol = sol2->Clone();
+    return sol;
 }
 
+RK* EDAUtils::maximumSolution(RK* sol1, RK* sol2) {
+	RK *sol = new RK();
+    if(sol1->getFitness() > sol2->getFitness())
+    	sol = sol1->Clone();
+    else
+    	sol = sol2->Clone();
+    return sol;
+}
 
 //int EDAUtils::getNumberofEvaluations()
 //{

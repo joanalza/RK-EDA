@@ -14,6 +14,7 @@ public:
 //double* randomkeys;
 //double fitness;
 //int* permutation;
+	RK();
     RK(double randomkeys1[], int psize);
   
 	~RK();

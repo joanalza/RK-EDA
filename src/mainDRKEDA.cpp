@@ -23,6 +23,7 @@ using namespace std;
 #include <vector>       // std::vector
 #include "EDAUtils.h"
 #include "DRKEDA.h"
+#include "Tools.h"
 
 int main(int argc, char* argv[]) {
 
@@ -30,8 +31,6 @@ int main(int argc, char* argv[]) {
 	int populationSize, FEs, truncSize, elitism, restart;
 	double minTemp, heating;
 	unsigned long seed;
-
-	int runs = 1;
 
 	// If arguments are passed to the execution
 	if (argc > 1) {

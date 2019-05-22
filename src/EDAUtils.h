@@ -19,6 +19,8 @@ public:
     bool myfunction(RK* i, RK* j);
     struct myclass;
     vector<RK*> sortPopulation(vector<RK*> pop);
+    void sortPop(vector<RK*> pop);
+    bool isSortedPopulation(vector<RK*> pop);
     RK* getBestSolutionMin(vector<RK*> pop);
     double getPopulationAverageFitness(vector<RK*> pop);
 //    RK* getBestSolutionMax(vector<RK*> pop);
@@ -29,6 +31,8 @@ public:
 //    vector<RK*> getPopulationRK(double* currentModel, double stdev, int probSize, int populationSize);
     double Mean(double* array, int tSize);
     int* randomKeyToAL(double priorities[], int pSize);
+    RK* minimumSolution(RK* perm1, RK* perm2);
+    RK* maximumSolution(RK* perm1, RK* perm2);
 
     double Variance(double* array, int num);
     double lowest(double* array, int size);
