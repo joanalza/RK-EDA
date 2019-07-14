@@ -16,9 +16,10 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+
+#include "DynPermP.h"
 #include "Tools.h"
 #include "RK.h"
-#include "PBP.h"
 using std::istream;
 using std::ostream;
 using namespace std;
@@ -30,7 +31,7 @@ using std::stringstream;
 using std::string;
 
 
-class DPFSP //: public PBP
+class DPFSP : public DynPermP
 {
 
 public:
@@ -38,13 +39,15 @@ public:
 	DPFSP();
 	virtual ~DPFSP();
 
-	int ReadTaillardInstance(string filename, string dynamic);
+	int ReadInstance(string filename);
+	void ReadDynamic(string dynamic);
 	double EvaluateFSPMakespan(int * genes);
-	int EvaluateFSPTotalFlowtime(int * genes);
+	double Evaluate(int * genes);
 	int getNumberofEvaluation();
 	int* getIdentityPermutation(int period);
-	int getProblemSize();
+	int GetProblemSize();
 	double getChangeStep(int changePeriod);
+	int getNumOfChanges();
 	string getDistance(string dynamic);
 	string getDistanceType(string dynamic);
 	string getDistanceMagnitude(string dynamic);
@@ -63,7 +66,7 @@ public:
 	int m_changes;
 	int *m_identityPermutation;
 	int **m_identityPermutations;
-	double *m_idenityChangesPercentage; // Percentage of the maxFes at which a change happens
+	double *m_identityChangesPercentage; // Percentage of the maxFes at which a change happens
 
 private:
 

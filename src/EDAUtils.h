@@ -17,11 +17,14 @@ public:
      EDAUtils();
     virtual ~EDAUtils();
     bool myfunction(RK* i, RK* j);
-    struct myclass;
+    struct byFitness;
+    struct byPermutation;
     vector<RK*> sortPopulation(vector<RK*> pop);
     void sortPop(vector<RK*> pop);
     bool isSortedPopulation(vector<RK*> pop);
+    bool areRepeatedInPopulation(vector<RK*> pop);
     RK* getBestSolutionMin(vector<RK*> pop);
+    bool popContainsPermutation(vector<RK*> pop, RK *x);
     double getPopulationAverageFitness(vector<RK*> pop);
 //    RK* getBestSolutionMax(vector<RK*> pop);
     double* getPM(vector<RK*> currentPopulation, int truncSize, int pSize);

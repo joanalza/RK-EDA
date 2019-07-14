@@ -11,12 +11,13 @@
 class LinearCooling {
 public:
 	LinearCooling();
-	LinearCooling(double initialT, int maximumGenerations);
+	LinearCooling(double maximumT, double minimumT, int maximumGenerations);
 	double getNewTemperature(int currentGen);
 
-	double initialTemperature;
+	double maximumTemperature;
+	double minimumTemperature;
 	double currentTemp;
-	int maxGens;
+	int m_gens;
 
 private:
 

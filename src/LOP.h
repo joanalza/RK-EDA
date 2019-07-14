@@ -11,13 +11,13 @@
 #define _LOP_H__
 
 #include "Tools.h"
-#include "PBP.h"
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string.h>
 #include <stdio.h>
+#include "DynPermP.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -31,7 +31,7 @@ using std::ifstream;
 using std::stringstream;
 using std::string;
 
-class LOP : public PBP
+class LOP : public DynPermP
 {
 	
 public:
@@ -62,7 +62,7 @@ public:
 	/*
 	 * Read LOP instance file.
 	 */
-	int Read(string filename);
+	int ReadInstance(string filename);
 	
 	/*
 	 * This function evaluates the solution for the LOP problem.

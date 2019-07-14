@@ -115,6 +115,16 @@ void RK::normalise() {
 	}
 	//randomkeys = normaliseRanks(permutation);
 }
+
+void RK::setRKfromPermutation(int* perm) {
+	randomkeys = new double[pSize];
+	for (int i = 0; i < pSize; i++) {
+		//            AL[i] = (double)(ranks[i]-1)/(size-1);
+//		cout << perm[i] << endl;
+		randomkeys[i] = (double)((double)perm[i] / (pSize - 1));
+	}
+	//randomkeys = normaliseRanks(permutation);
+}
 double* RK::getNormalisedRKs()
 {
 	return randomkeys;

@@ -85,7 +85,7 @@ void Tools::printarray(int perm[], int length) {
 void Tools::printarray(double perm[], int length) {
     for (int n = 0; n < length; ++n)
         cout << perm[n] << ' ';
-    cout << '\n';
+    cout << endl;
 }
 
 /*
@@ -99,6 +99,7 @@ void Tools::PrintArray(int* array, int length, string text)
 	}
 	cout<<" "<<endl;
 }
+
 
 char* Tools::perm2str(int* p, int n, char* s) {
     int PERMSTR_SIZE = 2048;
@@ -145,7 +146,7 @@ char* Tools::rk2str(double* p, int n) {
     char* ptr;
     for (int i = 1; i < n; i++) {
         ptr = s + strlen(s);
-        sprintf(ptr, "%.10lf", p[i]);
+        sprintf(ptr, " %.10lf", p[i]);
     }
     return s;
 }
@@ -243,8 +244,12 @@ bool Tools::areEqual(double *arr1, double *arr2, int size1, int size2)
 
 bool Tools::areEqual(int *arr1, int *arr2, int size1, int size2)
 {
-//	if (std::equal(arr1, arr1 + sizeof arr1 / sizeof *arr1, arr2))
-	if (std::equal(arr1, arr1 + size1, arr2))
+//	cout << "+++++++++++++++++++++++++++++++++++++++"<< endl ;
+//	Tools::printarray(arr1, size1);
+//	Tools::printarray(arr2, size2);
+//	cout << "+++++++++++++++++++++++++++++++++++++++"<< endl ;
+	if (std::equal(arr1, arr1 + sizeof arr1 / sizeof *arr1, arr2))
+//	if (std::equal(arr1, arr1 + size1, arr2))
 //	if (arr1 == arr2)
 		return true;
 	return false;

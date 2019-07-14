@@ -22,16 +22,15 @@
 //#include <algorithm>    // std::sort
 //#include <vector>       // std::vector
 //#include "EDAUtils.h"
-//#include "RKEDA.h"
+//#include "RKEDATrajectory.h"
+//#include "Tools.h"
 //
 //int main(int argc, char* argv[]) {
 //
-//	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs;
-//	int populationSize, FEs, truncSize, elitism;
-//	double initTemp;
+//	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs, modelResult, modelPerm;
+//	int populationSize, generations, truncSize, elitism, restart;
+//	double minTemp, heating;
 //	unsigned long seed;
-//
-//	int runs = 1;
 //
 //	// If arguments are passed to the execution
 //	if (argc > 1) {
@@ -47,7 +46,7 @@
 //		dynamicName = argv[5];
 //
 //		temp = argv[6];
-//		stringstream(temp) >> FEs;
+//		stringstream(temp) >> generations;
 //
 //		temp = argv[7];
 //		stringstream(temp) >> truncSize;
@@ -56,24 +55,37 @@
 //		stringstream(temp) >> elitism;
 //
 //		temp = argv[9];
-//		stringstream(temp) >> initTemp;
+//		stringstream(temp) >> minTemp;
 //
-//		resultsFolder = argv[10];
-//		saveAs= argv[11];
+//		temp = argv[10];
+//		stringstream(temp) >> heating;
+//
+//		resultsFolder = argv[11];
+//
+//		saveAs= argv[12];
 //		saveAs.insert(0,"progress-");
 //		saveAs.append(".csv");
 //
-//		temp = argv[12];
+//		modelResult = argv[12];
+//		modelResult.insert(0, "trace-");
+//		modelResult.append(".csv");
+//
+//		temp = argv[13];
 //		stringstream(temp) >> seed;
+//
+//		temp = argv[14];
+//		stringstream(temp) >> restart;
+//
+//		modelPerm = argv[15];
 //
 //	} else {
 //
 ////		cout << "Without arguments" << endl;
 ////		string input = "500 ./taillard_instances/ tai50_5_0.fsp 220712150 50 0 0.05 ./results/ tai50_5_0P500T50V0.06e0run0.txt ";
 //
-////		string input = "500 ./taillard_instances/ tai20_10_0.fsp ./dynamic/ dynProfile-n20-c3-Cayley2.txt -1 5 0 0.02 ./results/ process-tai20_10_0-dynProfile-n20-c3-Cayley2-currentbest_0.02_0.06-elt0--0.csv 5";
-//		string input = "200 taillard_instances/ tai20_5_9.fsp dynamic/ dynProfile-n20-c10-Cayley10.txt 4000000 20 0 0.15 results/ tai20_5_9-dynProfile-n20-c10-Cayley10-currentbest_0.15-elt0--9 9 ";
-////		string input = "500 taillard_instances/ tai50_10_0.fsp dynamic/ dynProfile-n50-c10-Cayley45.txt -1 5 0 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 1 ";
+//		string input = "200 taillard_instances/ tai20_20_0.fps dynamic/cayley/20/ dynProfile_n20_c10_C1__1.txt 20000 20 1 0.15 0 results/tai20_0/cayley/ tai20_20_0-dynProfile_n20_c10_C1__1-LC0.15_0-r0-elt1--1 812297940 0";
+////		string input = "200 taillard_instances/ tai20_5_9.fsp dynamic/ dynProfile-n20-c10-Cayley10.txt 4000000 20 0 0.15 results/ tai20_5_9-dynProfile-n20-c10-Cayley10-currentbest_0.15-elt0--9 9 0";
+////		string input = "500 taillard_instances/ tai50_10_0.fsp dynamic/ dynProfile-n50-c10-Cayley45.txt -1 5 0 0.0 results/ tai50_10_0-dynProfile-noChange-currentbest_0.0_0.2-elt0--9 0.2 1 ";
 //
 //
 //		long found = 0;
@@ -100,7 +112,7 @@
 //		dynamicName = temp;
 //
 //		temp = input.substr(pos[4] + 1, pos[5] - (pos[4] + 1));
-//		stringstream(temp) >> FEs;
+//		stringstream(temp) >> generations;
 //
 //		temp = input.substr(pos[5] + 1, pos[6] - (pos[5] + 1));
 //		stringstream(temp) >> truncSize;
@@ -109,16 +121,22 @@
 //		stringstream(temp) >> elitism;
 //
 //		temp = input.substr(pos[7] + 1, pos[8] - (pos[7] + 1));
-//		istringstream(temp) >> initTemp;
+//		istringstream(temp) >> minTemp;
 //
 //		temp = input.substr(pos[8] + 1, pos[9] - (pos[8] + 1));
-//		resultsFolder = temp;
+//		stringstream(temp) >> heating;
 //
 //		temp = input.substr(pos[9] + 1, pos[10] - (pos[9] + 1));
-//		saveAs= temp;
+//		resultsFolder = temp;
 //
 //		temp = input.substr(pos[10] + 1, pos[11] - (pos[10] + 1));
+//		saveAs= temp;
+//
+//		temp = input.substr(pos[11] + 1, pos[12] - (pos[11] + 1));
 //		stringstream(temp) >> seed;
+//
+//		temp = input.substr(pos[12] + 1, pos[13] - (pos[12] + 1));
+//		stringstream(temp) >> restart;
 //
 //		pos.clear();
 //	}
@@ -126,9 +144,12 @@
 //	filePath = fileDirectory + fileName;
 //	dynamicPath = dynamicFolder + dynamicName;
 //	resultsPath = resultsFolder + saveAs;
+//	modelResult = resultsFolder + modelResult;
 //
-//	RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, FEs, truncSize, elitism, resultsPath, seed);
-//	rkeda->runAlgorithm(initTemp);
+//
+//	RKEDATrajectory* trajectoryAlgorithm = new RKEDATrajectory(populationSize, filePath, dynamicPath, generations, truncSize, elitism,
+//			resultsPath, modelResult, seed, restart, modelPerm);
+//	trajectoryAlgorithm->runAlgorithm(minTemp, heating);
 //
 //	return 0;
 //}

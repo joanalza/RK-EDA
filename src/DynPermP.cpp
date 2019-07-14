@@ -7,13 +7,13 @@
  *
  */
 
-#include "PBP.h"
+#include "DynPermP.h"
 #include "Tools.h"
 
 /*
  * The constructor.
  */
-PBP::PBP()
+DynPermP::DynPermP()
 {
 	nextChangeIndex = 0;
 }
@@ -21,7 +21,7 @@ PBP::PBP()
 /*
  * The destructor. It frees the memory allocated.
  */
-PBP::~PBP()
+DynPermP::~DynPermP()
 {
 	delete[] identityPerm;
 	delete[] identityPermutationChanges ;
@@ -29,7 +29,7 @@ PBP::~PBP()
 }
 
 
-void PBP::setIdentityPermutationChanges(string dynamicfilename) {
+void DynPermP::setIdentityPermutationChanges(string dynamicfilename) {
 	
 	//cout << "dynProfilePath" << dynamicfilename << endl;
 	//cout << "dynProfilePath2" << dynamicfilename.c_str() << endl;
@@ -96,11 +96,11 @@ void PBP::setIdentityPermutationChanges(string dynamicfilename) {
 
 }
 
-void PBP::setPbsize(int size) {
+void DynPermP::setPbsize(int size) {
 	this->pbsize = size;
 }
 
-bool PBP::changeIdentityPermutation(int fes, int maxfes) {
+bool DynPermP::changeIdentityPermutation(int fes, int maxfes) {
 	//    	System.out.println("fes: "+fes+" - maxfes: "+maxfes);
 	//    	System.out.println("this.nextChangeIndex: "+this.nextChangeIndex);
 	//    	System.out.println("this.identityPermutationChanges.length: "+ this.identityPermutationChanges.length);

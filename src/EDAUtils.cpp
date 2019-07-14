@@ -35,21 +35,29 @@ bool EDAUtils::myfunction(RK* i, RK* j) {
     return (i->getFitness() < j->getFitness());
 }
 
-struct EDAUtils::myclass {
+struct EDAUtils::byFitness {
 
     bool operator()(RK* i, RK* j) {
         return (i->getFitness() < j->getFitness());
     }
-} myobject;
+} structuredByFitness;
+
+//struct EDAUtils::byPermutation {
+//	int *permutation;
+//	byPermutation():
+//	bool operator==(RK *i) const {
+//        return (Tools::areEqual(permutation, i->getPermutation(), i->pSize, i->pSize));
+//    }
+//} structuredByPermutation;
 
 vector<RK*> EDAUtils::sortPopulation(vector<RK*> pop) {
 
-    std::sort(pop.begin(), pop.end(), myobject);
+    std::sort(pop.begin(), pop.end(), structuredByFitness);  // O(nlogn)
     return pop;
 }
 
 void EDAUtils::sortPop(vector<RK*> pop) {
-    std::sort(pop.begin(), pop.end(), myobject);
+    std::sort(pop.begin(), pop.end(), structuredByFitness);
 }
 
 bool EDAUtils::isSortedPopulation(vector<RK*> pop){
@@ -58,6 +66,31 @@ bool EDAUtils::isSortedPopulation(vector<RK*> pop){
 			return false;
 	}
     return true;
+}
+
+bool EDAUtils::popContainsPermutation(vector<RK*> pop, RK *x) {
+//	Tools::PrintArray(x->getPermutation(), x->pSize, "Generated permutation: ");
+	for(int i=0; i< pop.size(); i++){
+//		Tools::PrintArray(pop.at(i)->getPermutation(), pop.at(i)->pSize, "Permutation in pop: ");
+		if (Tools::areEqual(pop.at(i)->getPermutation(), x->getPermutation(), pop.at(i)->pSize, x->pSize)){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool EDAUtils::areRepeatedInPopulation(vector<RK*> pop){
+	for (int i=0; i< pop.size();i++){
+		RK *perm = pop.at(i);
+		for (int j=0; j<pop.size(); j++){
+			if (i!=j){
+				if (Tools::areEqual(perm->getPermutation(), pop[j]->getPermutation(), perm->pSize, pop[j]->pSize))
+					cout << i << "," << j << endl;
+					return true;
+			}
+		}
+	}
+	return false;
 }
 
 RK* EDAUtils::getBestSolutionMin(vector<RK*> pop){

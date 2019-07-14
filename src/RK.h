@@ -40,15 +40,15 @@ string getRandomKeyAsString();
 RK copyOf();
 
 void normalise();
- double* getNormalisedRKs();
-double* normaliseRanks(int ranks[]);
- RK* Clone();
- RK* Clone2();
- int pSize;
- double* randomkeys;
- double fitness;
- int* permutation;
- Tools t;
+double* getNormalisedRKs();
+void setRKfromPermutation(int* perm);
+RK* Clone();
+RK* Clone2();
+int pSize;
+double* randomkeys;
+double fitness;
+int* permutation;
+Tools t;
 private:
 
 

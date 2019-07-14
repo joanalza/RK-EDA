@@ -10,7 +10,6 @@
 #ifndef _TSP_H__
 #define _TSP_H__
 
-#include "PBP.h"
 #include "Tools.h"
 #include <stdlib.h>
 #include <math.h>
@@ -20,6 +19,8 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+
+#include "DynPermP.h"
 using std::ifstream;
 using std::ofstream;
 using std::istream;
@@ -32,7 +33,7 @@ using std::ifstream;
 using std::stringstream;
 using std::string;
 
-class TSP : public PBP
+class TSP : public DynPermP
 {
 	
 public:
@@ -65,7 +66,7 @@ public:
     /*
 	 * Read TSP instance file.
 	 */
-	int Read(string filename);
+	int ReadInstance(string filename);
     
 	/*
 	 * This function evaluates the fitness of the solution for the TSP problem.

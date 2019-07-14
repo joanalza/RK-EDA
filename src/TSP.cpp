@@ -240,7 +240,7 @@ int TSP::Read2(string filename)
 /*
  * Read TSP instance file.
  */
-int TSP::Read(string filename)
+int TSP::ReadInstance(string filename)
 {
 	char line[2048]; // variable for input value
 	string data="";

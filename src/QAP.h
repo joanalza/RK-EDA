@@ -10,7 +10,6 @@
 #ifndef _QAP_H__
 #define _QAP_H__
 
-#include "PBP.h"
 #include "Tools.h"
 #include <stdlib.h>
 #include <math.h>
@@ -20,6 +19,7 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+#include "DynPermP.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -32,7 +32,7 @@ using std::endl;
 using std::stringstream;
 using std::string;
 
-class QAP : public PBP
+class QAP : public DynPermP
 {
 	
 public:
@@ -65,7 +65,7 @@ public:
 	/*
 	 * Read QAP file.
 	 */
-	int Read(string filename);
+	int ReadInstance(string filename);
 	
 	/*
 	 * This function evaluates the individuals for the QAP problem.

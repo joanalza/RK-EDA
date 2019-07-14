@@ -34,7 +34,7 @@ QAP::~QAP()
 
 
 
-int QAP::Read(string filename)
+int QAP::ReadInstance(string filename)
 {
 	char line[2048]; // variable for input value
 	ifstream indata;

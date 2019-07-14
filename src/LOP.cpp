@@ -33,7 +33,7 @@ LOP::~LOP()
 /*
  * Read LOP instance file.
  */
-int LOP::Read(string filename)
+int LOP::ReadInstance(string filename)
 {
 	char line[2048]; // variable for input value
 	string data="";

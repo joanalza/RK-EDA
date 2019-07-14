@@ -9,6 +9,7 @@
 #include "DPFSP.h"
 #include "Tools.h"
 #include "PFSP.h"
+#include "DynPermP.h"
 #include <fstream>
 #include <iostream>
 #include <algorithm>
@@ -22,7 +23,7 @@ DPFSP::DPFSP(){
 
 DPFSP::~DPFSP(){
 	delete[] m_identityPermutation;
-	delete[] m_idenityChangesPercentage;
+	delete[] m_identityChangesPercentage;
 	for (int i = 0; i < m_machines; i++){
 		delete[] m_processing_matrix[i];
 	}
@@ -31,7 +32,7 @@ DPFSP::~DPFSP(){
 	}
 }
 
-int DPFSP::ReadTaillardInstance(string filename, string dynamic){
+int DPFSP::ReadInstance(string filename){
 
 	m_nextChangeIndex = 0;
 	// Initialization of variables
@@ -40,15 +41,14 @@ int DPFSP::ReadTaillardInstance(string filename, string dynamic){
 	char *line = new char[2048]; // variable for input value
 	string data = "";
 	ifstream indata;
+	cout << filename << endl;
 	indata.open(filename.c_str(), ios::in);
-
-	// Read the content of the dynamic file
-	m_dynamicProfilePath = dynamic;
 
 	// Read the content of the taillard file
 	while (!indata.eof()){
 		// Read the line of the file
 		indata.getline(line, 2048);
+		cout << line << endl;
 		if (m_t.strContains(line, "number of jobs") == true && readMatrix == true){
 			break;
 		}else if (m_t.strContains(line, "number of jobs") == true){
@@ -105,9 +105,16 @@ int DPFSP::ReadTaillardInstance(string filename, string dynamic){
 		}
 	} while (iss);
 
+	return(m_jobs);
+}
+
+void DPFSP::ReadDynamic(string dynamic){
+
+	// Read the content of the dynamic file
+	m_dynamicProfilePath = dynamic;
+
 	setIdentityPermutationChanges();
 
-	return(m_jobs);
 }
 
 double DPFSP::EvaluateFSPMakespan(int *genes){
@@ -140,12 +147,13 @@ double DPFSP::EvaluateFSPMakespan(int *genes){
 	return fitness;
 }
 
-int DPFSP::EvaluateFSPTotalFlowtime(int *genes){
+double DPFSP::Evaluate(int *genes){
 	m_evaluations++;
 	int *timeTable = new int[m_machines];
-	int i, j, z, job, first_gene, fitness;
+	int i, j, z, job, first_gene;
 	int machine;
 	int prev_machine = 0;
+	double fitness;
 	// int[] m_aux= new int[m_jobs];
 
 	for (i = 0; i < m_machines; i++)
@@ -185,11 +193,16 @@ int DPFSP::getNumberofEvaluation(){
 }
 
 double DPFSP::getChangeStep(int changePeriod){
-	return m_idenityChangesPercentage[changePeriod - 1];
+//	Tools::printarray(m_idenityChangesPercentage, m_changes);
+	return m_identityChangesPercentage[changePeriod - 1];
 }
 
-int DPFSP::getProblemSize(){
+int DPFSP::GetProblemSize(){
 	return(m_jobs);
+}
+
+int DPFSP::getNumOfChanges(){
+	return(m_changes);
 }
 
 string DPFSP::getDistance(string dynamic){
@@ -216,6 +229,7 @@ void DPFSP::setIdentityPermutationChanges(){
 
 		ifstream indata;
 		char *line = new char[2048]; // variable for input value
+		cout << m_dynamicProfilePath << endl;
 		indata.open(m_dynamicProfilePath.c_str(), ios::in);
 
 		int i = 0, j=0;
@@ -223,20 +237,22 @@ void DPFSP::setIdentityPermutationChanges(){
 		while (!indata.eof()){
 				// Read the line of the file
 				indata.getline(line, 2048);
+				cout << line << endl;
 				if ((line != NULL) && (line[0] == '\0')){
 					break;
 				}else if (!m_t.strContains(line, ";")){
 					m_changes = atoi(line);
 
 					//BUILD JOB PROCESSING MATRIX
-					m_idenityChangesPercentage = new double[m_changes];
+					m_identityChangesPercentage = new double[m_changes];
 					m_identityPermutations = new int*[m_changes];
-					for (int i = 0; i<m_changes; i++){
+					for (i = 0; i<m_changes; i++){
 						m_identityPermutations[i] = new int[m_jobs];
 					}
+					i = 0;
 				}else{
 					//char *data = ;
-					m_idenityChangesPercentage[i] = atof(strtok(line, ";"));
+					m_identityChangesPercentage[i] = atof(strtok(line, ";"));
 					//data = ;
 					char *perm = strtok(strtok(NULL, ";"),",");
 					while (perm){
@@ -258,7 +274,7 @@ void DPFSP::setIdentityPermutationChanges(){
 
 bool DPFSP::changeIdentityPermutation(int fes, int maxfes){
 	if (m_nextChangeIndex < m_changes){
-		int nextChangeFes = (int)rint(m_idenityChangesPercentage[m_nextChangeIndex]*(double)maxfes);
+		int nextChangeFes = (int)rint(m_identityChangesPercentage[m_nextChangeIndex]*(double)maxfes);
 		if(fes>=nextChangeFes){
 			m_identityPermutation = m_identityPermutations[m_nextChangeIndex];
 			m_nextChangeIndex++;

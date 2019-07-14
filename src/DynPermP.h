@@ -22,7 +22,7 @@ using namespace std;
 using std::stringstream;
 using std::string;
 
-class PBP
+class DynPermP
 {
 public:
 		
@@ -30,7 +30,7 @@ public:
      * Auxiliary vector for inversion.
      */
     int * m_aux;
-    
+    int m_changes;
 	int* identityPerm;
 	//int** identityPermutations;
 	vector<int*> identityPermutations;
@@ -42,39 +42,46 @@ public:
 	/*
 	 * The constructor.
 	 */
-	PBP();
+	DynPermP();
 	
 	/*
 	 * The destructor. It frees the memory allocated.
 	 */
-	virtual ~PBP();
+	virtual ~DynPermP();
 	
 	/*
 	 * Virtual evaluation function.
 	 */
 	virtual double Evaluate(int*genes)=0;
 
-    /*
-	 * Virtual evaluation function of the inverted solution.
-	 */
-	virtual double EvaluateInv(int*genes)=0;
+//    /*
+//	 * Virtual evaluation function of the inverted solution.
+//	 */
+//	virtual double EvaluateInv(int*genes)=0;
     
     /*
 	 * Virtual instance reading function.
 	 */
-	virtual int Read(string filename)=0;
+	virtual int ReadInstance(string filename)=0;
+	virtual void ReadDynamic(string filename)=0;
     
     /*
      * Returns the size of the problem.
      */
     virtual int GetProblemSize()=0;
-    
+    virtual int getNumOfChanges()=0;
 
 	virtual void setIdentityPermutationChanges(string dynamicfilename);
 
 	virtual bool changeIdentityPermutation(int fes, int maxfes);
 
 	virtual void setPbsize(int size);
+
+	virtual string getDistance(string dynamic)=0;
+	virtual string getDistanceType(string dynamic)=0;
+	virtual string getDistanceMagnitude(string dynamic)=0;
+	virtual double getChangeStep(int changePeriod)=0;
+	virtual int* getIdentityPermutation(int period) =0;
 
 private:
     

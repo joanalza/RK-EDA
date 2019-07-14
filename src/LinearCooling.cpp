@@ -14,14 +14,15 @@
 #include "math.h"
 
 LinearCooling::LinearCooling(){ }
-LinearCooling::LinearCooling(double initialT, int maximumGenerations){
-	initialTemperature = initialT;
+LinearCooling::LinearCooling(double initialT, double minT, int maximumGenerations){
+	maximumTemperature = initialT;
+	minimumTemperature = minT;
 	currentTemp = initialT;
-	maxGens = maximumGenerations;
+	m_gens = maximumGenerations;
 }
 
 double LinearCooling::getNewTemperature(int currentGen){
-	 double c = (1 - ((double) currentGen / maxGens));
-	 currentTemp = initialTemperature * c;
+	 double c = (1 - ((double) currentGen / m_gens));
+	 currentTemp = (maximumTemperature - minimumTemperature) * c + minimumTemperature;
 	return currentTemp;
 }
