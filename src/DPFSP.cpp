@@ -41,14 +41,14 @@ int DPFSP::ReadInstance(string filename){
 	char *line = new char[2048]; // variable for input value
 	string data = "";
 	ifstream indata;
-	cout << filename << endl;
+//	cout << filename << endl;
 	indata.open(filename.c_str(), ios::in);
 
 	// Read the content of the taillard file
 	while (!indata.eof()){
 		// Read the line of the file
 		indata.getline(line, 2048);
-		cout << line << endl;
+//		cout << line << endl;
 		if (m_t.strContains(line, "number of jobs") == true && readMatrix == true){
 			break;
 		}else if (m_t.strContains(line, "number of jobs") == true){
@@ -148,6 +148,7 @@ double DPFSP::EvaluateFSPMakespan(int *genes){
 }
 
 double DPFSP::Evaluate(int *genes){
+//	Tools::PrintArray(genes, m_jobs, "Perm1: ");
 	m_evaluations++;
 	int *timeTable = new int[m_machines];
 	int i, j, z, job, first_gene;
@@ -160,7 +161,7 @@ double DPFSP::Evaluate(int *genes){
 		timeTable[i] = 0;
 
 	// int first_gene=genes[0];
-	first_gene = m_identityPermutation[genes[0]];
+	first_gene = genes[m_identityPermutation[0]];
 
 	timeTable[0] = m_processing_matrix[0][first_gene];
 	for (j = 1; j < m_machines; j++) {
@@ -170,7 +171,7 @@ double DPFSP::Evaluate(int *genes){
 	fitness = timeTable[m_machines - 1];
 	for (z = 1; z < m_jobs; z++) {
 //		job = genes[z];
-		job = m_identityPermutation[genes[z]];
+		job = genes[m_identityPermutation[z]];
 
 		// machine 0 is always incremental, so:
 		timeTable[0] += m_processing_matrix[0][job];
@@ -229,7 +230,7 @@ void DPFSP::setIdentityPermutationChanges(){
 
 		ifstream indata;
 		char *line = new char[2048]; // variable for input value
-		cout << m_dynamicProfilePath << endl;
+//		cout << m_dynamicProfilePath << endl;
 		indata.open(m_dynamicProfilePath.c_str(), ios::in);
 
 		int i = 0, j=0;
@@ -237,7 +238,7 @@ void DPFSP::setIdentityPermutationChanges(){
 		while (!indata.eof()){
 				// Read the line of the file
 				indata.getline(line, 2048);
-				cout << line << endl;
+//				cout << line << endl;
 				if ((line != NULL) && (line[0] == '\0')){
 					break;
 				}else if (!m_t.strContains(line, ";")){

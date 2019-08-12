@@ -105,8 +105,11 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		child = new RK(childAct, m_problemSize);
 
 		// Set permutation, normalise and
+//		cout << "RK: " << endl;
+//		Tools::printarray(childAct, m_problemSize);
 		child->setPermutation(m_e.randomKeyToAL(childAct, m_problemSize));
 		child->normalise();
+//		Tools::printarray(child->copyGene(), m_problemSize);
 		child->setFitness(m_dop->Evaluate(child->getPermutation()));
 		noOfEvals++;
 		pop[i] = (child);
@@ -115,7 +118,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 		else
 			bestSolution = m_e.minimumSolution(pop[i],bestSolution);
 		avgFitness += pop[i]->getFitness();
-//		Tools::PrintArray(pop[i]->getPermutation(), pop[i]->pSize, "");
+		//Tools::PrintArray(pop[i]->getPermutation(), pop[i]->pSize, "");
 	}
 
 //	bestSolution = m_e.getBestSolutionMin(pop);
@@ -136,10 +139,12 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 	// Iterative process
 	do {
+		pop = m_e.sortPopulation(pop);
+		for (int i=0; i<m_populationSize;i++)
+			//cout << Tools::perm2str(pop[i]->getPermutation(), pop[i]->getProblemSize()) << " " << pop[i]->getFitness() << endl;
 		// Check if a change has occurred and change it if so
 //		bool detect = m_dfsp.detectChange(previousBest, bestSolutionOfPopulation);
 		if(m_dop->Evaluate(bestSolutionOfPopulation->getPermutation()) != bestSolutionOfPopulation->getFitness()){
-			cout << "REACTED" << ichange << endl;
 			if (m_restart == 0) {
 				for (i = 0; i < m_populationSize; i++) {
 					pop.at(i)->fitness = m_dop->Evaluate(pop.at(i)->permutation);
@@ -163,11 +168,10 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 					pop[i] = (child);
 				}
 			}
-			cout << noOfEvals << "; " << stdev << "; " << bestSolution->getFitness() << "; [" << bestSolution->getPermutationAsString() << "]" << gen <<endl;
 			bestSolutionOfPopulation = m_e.getBestSolutionMin(pop);
 			avgFitness = m_e.getPopulationAverageFitness(pop);
 			bestPerChange = m_e.getBestSolutionMin(pop);
-
+			cout << "ALL best: " << bestSolution->getFitness() << "; Current best: [" << bestPerChange->getPermutationAsString() << "], " << bestPerChange->fitness << endl;
 //			if (ichange > m_dop->m_changes)
 //				heating = m_generations - (m_generations * m_dop->getChangeStep(ichange - 1));
 //			else
@@ -246,6 +250,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 			std::stringstream ss;
 			ss << "Sol" <<j << ": ";
 			string sol = ss.str();
+			//cout << Tools::perm2str(pop[j]->getPermutation(), pop[j]->getProblemSize()) << " " << pop[j]->getFitness() << endl;
 //			Tools::PrintArray(pop[j]->getPermutation(), pop[j]->pSize, sol);
 //			population[j] = child;
 			// OVERALL
@@ -295,10 +300,10 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 			genChange = 1;
 			ichange++;
 //			cout << landscapeInterpretation << endl;
-			cout <<  "------------------------" << ichange << "----------------------" << gen << endl;
+			cout << "Gen: " << gen << ". Change: " << ichange - 1<< ". Best: "<< bestPerChange->getFitness() << endl;
 
 		}
-		cout << "Gen: " << gen << ". Change: " << ichange<< ". Varance: "<< stdev << endl;
+		cout << "Gen: " << gen << ". Change: " << ichange<< ". Best: "<< bestPerChange->getFitness() << endl;
 
 //		cout << (((double) (endtime - starttime)) / CLOCKS_PER_SEC) << endl;
 	} while(gen < m_generations);

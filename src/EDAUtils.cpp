@@ -261,13 +261,16 @@ double* EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize)
 
 int* EDAUtils::randomKeyToAL(double* priorities, int pSize) {
 
+
 	double* p = new double[pSize];
     vector<int> AL;
 
     for (int i = 0; i < pSize; i++) {
 		p[i] = priorities[i];
     }
+    //Tools::printarray(p, pSize);
 	sort(p, p + pSize);
+	//Tools::printarray(p, pSize);
 	int k = 0;
 
 	for (int i = 0; i < pSize; i++) {
@@ -289,15 +292,18 @@ int* EDAUtils::randomKeyToAL(double* priorities, int pSize) {
 outer:
 
     // cout << perm2str(AL, pSize) << endl;
-    int* AL1 = new int[AL.size()];
+int* AL1 = new int[AL.size()];
+int* AL2 = new int[AL.size()];
     for (unsigned int i = 0; i < AL.size(); i++) {
         AL1[i] = AL[i];
     }
+    Tools::Invert(AL1, pSize, AL2);
+    //Tools::PrintArray(AL2, pSize, "Perm: ");
     AL.clear();
     //AL.shrink_to_fit(); // ##C++11
 	AL.swap(AL); // ##C++0x
     delete[] p;
-    return AL1;
+    return AL2;
 }
 
 double EDAUtils::Mean(double* array, int tSize) {

@@ -109,9 +109,10 @@ RK RK::copyOf() {
 }
 
 void RK::normalise() {
+//	Tools::PrintArray(permutation, pSize, "Perm to normalise: ");
 	for (int i = 0; i < pSize; i++) {
 		//            AL[i] = (double)(ranks[i]-1)/(size-1);
-		randomkeys[permutation[i]] = (double)((double)i / (pSize - 1));
+		randomkeys[i] = (double)((double)permutation[i] / (pSize - 1));
 	}
 	//randomkeys = normaliseRanks(permutation);
 }
