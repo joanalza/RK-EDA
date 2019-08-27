@@ -51,6 +51,8 @@ public:
 	 * The number of jobs of the problem.
 	 */
 	int m_size;
+
+	int *m_aux;
 	
 	/*
      * The constructor. It initializes a QAP from a file.

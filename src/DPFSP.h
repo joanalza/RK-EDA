@@ -52,21 +52,21 @@ public:
 	string getDistanceType(string dynamic);
 	string getDistanceMagnitude(string dynamic);
 	void setIdentityPermutationChanges();
-	bool changeIdentityPermutation(int fes, int maxfes);
+	//bool changeIdentityPermutation(int fes, int maxfes);
 	bool detectChange(RK *perm1, RK *perm2);
 
 	int m_jobs;
 	int m_machines;
 	int **m_processing_matrix;
 	int m_evaluations;
-	Tools m_t;
+//	Tools m_t;
 
-	string m_dynamicProfilePath;
-	int m_nextChangeIndex;
-	int m_changes;
-	int *m_identityPermutation;
-	int **m_identityPermutations;
-	double *m_identityChangesPercentage; // Percentage of the maxFes at which a change happens
+//	string m_dynamicProfilePath;
+//	int m_nextChangeIndex;
+//	int m_changes;
+//	int *m_identityPermutation;
+//	int **m_identityPermutations;
+//	double *m_identityChangesPercentage; // Percentage of the maxFes at which a change happens
 
 private:
 

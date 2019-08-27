@@ -12,6 +12,7 @@ class AziziAdaptativeCooling {
 public:
 	AziziAdaptativeCooling();
 	AziziAdaptativeCooling(double minTemp, double heating);
+	virtual ~AziziAdaptativeCooling();
 	double getNewTemperature(int currentGen);
 
 	double currentTemp;

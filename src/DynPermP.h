@@ -29,15 +29,14 @@ public:
     /*
      * Auxiliary vector for inversion.
      */
-    int * m_aux;
-    int m_changes;
-	int* identityPerm;
+    int m_numChanges;
+	int* m_identityPerm;
 	//int** identityPermutations;
-	vector<int*> identityPermutations;
-	int nChanges, pbsize;
-	double* identityPermutationChanges; // percentage of the maxFes at which a change happens
-	int nextChangeIndex;
-	string dynProfilePath;
+	vector<int*> m_identityPermutations;
+	int m_problemSize;
+	double* m_normalisedChangeGenerations; // percentage of the maxFes at which a change happens
+	int m_nextChangeIndex;
+//	string m_dynamicProfilePath;
 
 	/*
 	 * The constructor.

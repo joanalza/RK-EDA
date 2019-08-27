@@ -5,51 +5,75 @@
  * Created on 24 April 2017, 15:27
  */
 #include "Tools.h"
+#include "EDAUtils.h"
+#include <iostream>
+#include <cstring>
 
 #ifndef RK_H
 #define	RK_H
 class RK {
 public:
-// int pSize;
-//double* randomkeys;
-//double fitness;
-//int* permutation;
+	
 	RK();
-    RK(double randomkeys1[], int psize);
-  
-	~RK();
+	RK(double randomkeys1[], int psize);
+	virtual ~RK();
    
-double getFitness();
+	double getFitness();
+	void setFitness(double fitness1);
+	void setProblemSize(int size);
+	void setRandomKeys(double* rks);
 
-void setFitness(double fitness1);
+	void setPermutation(int* perm);
 
-void setProblemSize(int size);
+	int getProblemSize();
 
-int getProblemSize();
+	int* getPermutation();
 
-int* getPermutation();
+	double* getRandomKeys();
 
-void setPermutation(int* perm);
+	double* copyGene();
 
-double* copyGene();
+//	string getPermutationAsString();
 
-string getPermutationAsString();
+//	string getRandomKeyAsString();
 
-string getRandomKeyAsString();
+	RK copyOf();
 
-RK copyOf();
+	void normalise();
+	double* getNormalisedRKs();
+	void setRKfromPermutation(int* perm);
+	RK* Clone();
+	void deepCopy(RK* obj1);
+	void setPermFromRKs() {
+		double* ordered_rks = new double[m_pSize];
+		bool found = false;
+		int i, j = 0;
+		for (i = 0; i < m_pSize; i++) {
+			ordered_rks[i] = m_randomkeys[i];
+		}
+		//		Tools::printRK(ordered_rks, problemSize);
+		sort(ordered_rks, ordered_rks + m_pSize);
+		//		Tools::printRK(ordered_rks, problemSize);
+		for (i = 0; i < m_pSize; i++) {
+			found = false;
+			while (!found) {
+				if (ordered_rks[j] == m_randomkeys[i]) {
+					m_permutation[i] = j;
+					found = true;
+					j = 0;
+				}
+				else
+					j++;
+			}
+		}
+		delete[] ordered_rks;
+	}
 
-void normalise();
-double* getNormalisedRKs();
-void setRKfromPermutation(int* perm);
-RK* Clone();
-RK* Clone2();
-int pSize;
-double* randomkeys;
-double fitness;
-int* permutation;
-Tools t;
-private:
+	int m_pSize;
+	double* m_randomkeys;
+	int* m_permutation;
+	double m_fitness;
+	private:
 
 
 };

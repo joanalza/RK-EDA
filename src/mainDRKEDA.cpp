@@ -27,7 +27,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs, modelPath;
+	string fileDirectory, fileName, filePath, dynamicFolder, dynamicName, dynamicPath, resultsFolder, resultsPath, saveAs, modelPath; //+10
 	int populationSize, generations, truncSize, elitism, restart;
 	double minTemp, heating;
 	unsigned long seed;
@@ -36,14 +36,13 @@ int main(int argc, char* argv[]) {
 	if (argc > 1) {
 
 //		cout << "Arguments" << endl;
-		string temp = argv[1];
-		stringstream(temp) >> populationSize;
+		string temp = argv[1]; //+1
+		stringstream(temp) >> populationSize; //+7
 
-		fileDirectory =  argv[2];
+		fileDirectory =  argv[2]; //+1
 		fileName= argv[3];
-
 		dynamicFolder =  argv[4] ;
-		dynamicName = argv[5];
+		dynamicName = argv[5]; //+1
 
 		temp = argv[6];
 		stringstream(temp) >> generations;
@@ -135,12 +134,13 @@ int main(int argc, char* argv[]) {
 		pos.clear();
 	}
 
-	filePath = fileDirectory + fileName;
-	dynamicPath = dynamicFolder + dynamicName;
-	resultsPath = resultsFolder + saveAs;
+	filePath = fileDirectory + fileName; // +1
+	dynamicPath = dynamicFolder + dynamicName; // +1
+	resultsPath = resultsFolder + saveAs; // +1
 
-	RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, generations, truncSize, elitism, resultsPath, seed, restart);
-	rkeda->runAlgorithm(minTemp, heating);
-
-	return 0;
+	RKEDA* rkeda = new RKEDA(populationSize, filePath, dynamicPath, generations, truncSize, elitism, resultsPath, seed, restart); //+8
+	rkeda->runAlgorithm(minTemp, heating); //+21
+	delete rkeda; //-8
+	
+	return 0; // -16
 }

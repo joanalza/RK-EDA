@@ -6,168 +6,113 @@ using namespace std;
 
 
 
-//int* permutation= new int[IND_SIZE];
+//int* m_permutation= new int[IND_SIZE];
 
 RK::RK(){
 
 }
 
 RK::RK(double randomkeys1[], int psize) {
-	pSize = psize;
-	//randomkeys = new double[psize];
-	//permutation = new int[psize];
-	randomkeys = randomkeys1;
-	/*for (int i = 0; i < psize; i++) {
-		randomkeys[i] = randomkeys1[i];
-	}*/
+	m_pSize = psize;
+	m_randomkeys = new double[m_pSize];
+	for (int i = 0; i < psize; i++) 
+		m_randomkeys[i] = randomkeys1[i];
+	m_permutation = new int[m_pSize];
+	setPermFromRKs();
 }
 
 RK::~RK()
 {
-	delete[] randomkeys;
-	delete[] permutation;
+	delete[] m_randomkeys;
+	delete[] m_permutation;
 
-}
-
-RK* RK::Clone()
-{
-	//RK rk1(randomkeys, pSize);
-	RK*  ind = new RK(randomkeys, pSize);
-	ind->setFitness(fitness);
-	ind->setPermutation(permutation);
-	return ind;
-}
-
-RK* RK::Clone2()
-{
-	double* newrandomkeys = new double[pSize];
-	for (int i = 0; i < pSize; i++) {
-		newrandomkeys[i] = randomkeys[i];
-	}
-	RK*  ind = new RK(newrandomkeys, pSize);
-	
-	int* newperm = new int[pSize];
-	for (int i = 0; i < pSize; i++) {
-		newperm[i] = permutation[i];
-	}
-
-	ind->setPermutation(newperm);
-	ind->setFitness(fitness);
-
-	return ind;
-}
-
-
-double RK::getFitness() {
-	return fitness;
-}
-
-void RK::setFitness(double fitness1) {
-	fitness = fitness1;
-}
-
-void RK::setProblemSize(int size) {
-	pSize = size;
-}
-
-int RK::getProblemSize() {
-	return pSize;
-}
-
-int* RK::getPermutation() {
-	/*int* perm = new int[pSize];
-
-	for (int i = 0; i < pSize; i++) {
-		perm[i] = permutation[i];
-	}
-	return perm;*/
-	return permutation;
-}
-
-void RK::setPermutation(int* perm) {
-
-	permutation = perm;
-	// for (int i = 0; i < pSize; i++) {
-	 //    permutation[i] = perm[i];
-	// }
-}
-
-double* RK::copyGene() {
-	double* randomkeys1 = new double[pSize];
-	for (int i = 0; i < pSize; i++) {
-		randomkeys1[i] = randomkeys[i];
-	}
-	return randomkeys1;
 }
 
 RK RK::copyOf() {
 
-	RK rk1(randomkeys, pSize);
-	rk1.setFitness(fitness);
-	rk1.setPermutation(permutation);
+	RK rk1(m_randomkeys, m_pSize);
+	rk1.setFitness(m_fitness);
+	rk1.setPermutation(m_permutation);
 	return rk1;
 }
 
-void RK::normalise() {
-//	Tools::PrintArray(permutation, pSize, "Perm to normalise: ");
-	for (int i = 0; i < pSize; i++) {
-		//            AL[i] = (double)(ranks[i]-1)/(size-1);
-		randomkeys[i] = (double)((double)permutation[i] / (pSize - 1));
+RK* RK::Clone()
+{
+	//RK rk1(m_randomkeys, m_pSize);
+	RK*  ind = new RK(m_randomkeys, m_pSize);
+	ind->setFitness(m_fitness);
+	ind->setPermutation(m_permutation);
+	return ind;
+}
+
+void RK::deepCopy(RK* obj1)
+{
+	setProblemSize(obj1->getProblemSize());
+	setPermutation(obj1->getPermutation());
+	setRandomKeys(obj1->getRandomKeys());
+	setFitness(obj1->getFitness());
+}
+
+
+double RK::getFitness() {
+	return m_fitness;
+}
+
+void RK::setFitness(double fitness1) {
+	m_fitness = fitness1;
+}
+
+void RK::setProblemSize(int size) {
+	m_pSize = size;
+}
+
+int RK::getProblemSize() {
+	return m_pSize;
+}
+
+void RK::setRandomKeys(double *rks) {
+	for (int i = 0; i< m_pSize; i++)
+		m_randomkeys[i] = rks[i];
+}
+
+int* RK::getPermutation() {
+	return m_permutation;
+}
+
+double* RK::getRandomKeys() {
+	return m_randomkeys;
+}
+
+void RK::setPermutation(int* perm) {
+	for (int i = 0; i< m_pSize; i++)
+		m_permutation[i] = perm[i];
+}
+
+double* RK::copyGene() {
+	double* randomkeys1 = new double[m_pSize];
+	for (int i = 0; i < m_pSize; i++) {
+		randomkeys1[i] = m_randomkeys[i];
 	}
-	//randomkeys = normaliseRanks(permutation);
+	return randomkeys1;
+}
+
+void RK::normalise() {
+	for (int i = 0; i < m_pSize; i++) {
+		m_randomkeys[i] = (double)((double)m_permutation[i] / (m_pSize - 1));
+	}
 }
 
 void RK::setRKfromPermutation(int* perm) {
-	randomkeys = new double[pSize];
-	for (int i = 0; i < pSize; i++) {
+	m_randomkeys = new double[m_pSize];
+	for (int i = 0; i < m_pSize; i++) {
 		//            AL[i] = (double)(ranks[i]-1)/(size-1);
 //		cout << perm[i] << endl;
-		randomkeys[i] = (double)((double)perm[i] / (pSize - 1));
+		m_randomkeys[i] = (double)((double)perm[i] / (m_pSize - 1));
 	}
-	//randomkeys = normaliseRanks(permutation);
+	//m_randomkeys = normaliseRanks(m_permutation);
 }
 double* RK::getNormalisedRKs()
 {
-	return randomkeys;
-}
-
-// double* RK::normaliseRanks(int ranks[]) {
-//
-//    //double* AL[pSize];
-//    double* AL= new double[pSize];
-//    
-//    for (int i = 0; i < pSize; i++) {
-//        //            AL[i] = (double)(ranks[i]-1)/(size-1);
-//        AL[ranks[i]] = (double)((double)i /(pSize - 1));
-//    }
-//    //             System.out.println("normalised: " + Arrays.toString(AL));
-//    return AL;
-//}
-// 
-
-string RK::getPermutationAsString() {
-	string out = t.perm2str(permutation, pSize);
-
-	/*string out = "";
-	for (int i = 0; i < pSize; i++) {
-		out = out + permutation[i];
-		if (i < pSize - 1)
-			out = out+ ",";
-	}*/
-
-	return out;
-}
-
-string RK::getRandomKeyAsString() {
-	string out = t.rk2str(randomkeys, pSize);
-
-	/*string out = "";
-	for (int i = 0; i < pSize; i++) {
-		out = out + permutation[i];
-		if (i < pSize - 1)
-			out = out+ ",";
-	}*/
-
-	return out;
+	return m_randomkeys;
 }
 

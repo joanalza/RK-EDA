@@ -9,6 +9,7 @@
 #include "Tools.h"
 #include <cstdlib>
 #include <cstring>
+#include <string>
 using namespace std;
 
 
@@ -76,24 +77,24 @@ double Tools::Variance(double* array, int num) {
     return var;
 }
 
-void Tools::printarray(int perm[], int length) {
+void Tools::printPermutation(int perm[], int length) {
     for (int n = 0; n < length; ++n)
         cout << perm[n] << ' ';
     cout << '\n';
 }
 
-void Tools::printarray(double perm[], int length) {
-    for (int n = 0; n < length; ++n)
-        cout << perm[n] << ' ';
-    cout << endl;
+void Tools::printRK(double perm[], int length) {
+	for (int n = 0; n < length; ++n)
+		cout << perm[n] << ' ';
+	cout << '\n';
 }
 
 /*
  * Prints in standard output 'length' integer elements of a given array.
  */
-void Tools::PrintArray(int* array, int length, string text)
+void Tools::printPermutationWithPrefix(int* array, int length, string text)
 {
-	cout<<text;
+	cout << text;
 	for (int i=0;i<length;i++){
 		cout<<array[i]<<" ";
 	}
@@ -116,7 +117,7 @@ char* Tools::perm2str(int* p, int n, char* s) {
 
 char* Tools::perm2str(int* p, int n) {
     int PERMSTR_SIZE = 2048;
-       char*   s = new char[PERMSTR_SIZE];
+    char* s = new char[PERMSTR_SIZE];
     sprintf(s, "%d", p[0]);
     char* ptr;
     for (int i = 1; i < n; i++) {
@@ -128,7 +129,7 @@ char* Tools::perm2str(int* p, int n) {
 
 char* Tools::perm2str(vector<int> p, int n) {
     int PERMSTR_SIZE = 2048;
-       char*   s = new char[PERMSTR_SIZE];
+     char*   s = new char[PERMSTR_SIZE];
     sprintf(s, "%d", p[0]);
     char* ptr;
     for (int i = 1; i < n; i++) {
@@ -154,7 +155,7 @@ char* Tools::rk2str(double* p, int n) {
 char* Tools::rk2str(vector<double> p, int n) {
     int PERMSTR_SIZE = 2048;
     
-     char*   s = new char[PERMSTR_SIZE];
+    char*   s = new char[PERMSTR_SIZE];
     sprintf(s, "%.10lf", p[0]);
     char* ptr;
     for (int i = 1; i < n; i++) {
@@ -184,13 +185,13 @@ int* Tools::randomKeyToAL(double* priorities, int pSize) {
     vector<double> p;
     vector<int> AL; 
 
-//     cout << rk2str(priorities, pSize) << endl;
+//     cout << rk2str(priorities, m_pSize) << endl;
     for (int i = 0; i < pSize; i++) {
         p.push_back(priorities[i]);
     }
     
     sort(p.begin(),p.end()); 
-//     cout << rk2str(p, pSize) << endl;
+//     cout << rk2str(p, m_pSize) << endl;
 
         for (unsigned int i = 0; i < p.size(); i++) {
             for (unsigned int j = 0; j < p.size(); j++) {
@@ -208,7 +209,7 @@ int* Tools::randomKeyToAL(double* priorities, int pSize) {
      
      outer:
  
-// cout << perm2str(AL, pSize) << endl;
+// cout << perm2str(AL, m_pSize) << endl;
     int* AL1 = new int[AL.size()];
     for (unsigned int i = 0; i < AL.size(); i++) {
         AL1[i] = AL[i];
@@ -292,7 +293,7 @@ vector<string> Tools::split(string str)
 }
 
 /*
- * Inverts a permutation.
+ * Inverts a m_permutation.
  */
 void Tools::Invert(int*permu, int n, int* inverted)
 {

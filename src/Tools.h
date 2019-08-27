@@ -11,7 +11,8 @@
 #include <algorithm>    // std::sort
 #include <iostream>
 #include <stdio.h>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+
 using namespace std;
 class Tools {
 public:
@@ -22,9 +23,9 @@ public:
     static double Variance(int* array, int num);
     static double Mean(double* array, int num);
     static double Variance(double* array, int num);
-    static void printarray(int perm[], int length);
-    static void printarray(double perm[], int length);
-    static void PrintArray(int* array, int length, string text);
+    static void printPermutation(int perm[], int length);
+    static void printRK(double perm[], int length);
+    static void printPermutationWithPrefix(int* array, int length, string text);
     static char* double2str(double n, char* s);
     static char* perm2str(int* p, int n, char* s);
     static char* perm2str(int* p, int n);

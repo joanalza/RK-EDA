@@ -47,6 +47,8 @@ public:
 	 * The number of cities.
 	 */
 	int m_size;
+
+	int *m_aux;
 	
 	/*
      * The constructor.
@@ -69,7 +71,7 @@ public:
 	int ReadInstance(string filename);
     
 	/*
-	 * This function evaluates the fitness of the solution for the TSP problem.
+	 * This function evaluates the m_fitness of the solution for the TSP problem.
 	 */
 	double Evaluate(int * genes);
 

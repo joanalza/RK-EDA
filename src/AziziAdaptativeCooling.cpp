@@ -5,8 +5,6 @@
  *      Author: 1715818
  */
 
-
-
 #include <ctime>
 #include <string>
 #include <iostream>
@@ -19,6 +17,7 @@ AziziAdaptativeCooling::AziziAdaptativeCooling(double minTemp, double heating){
 	currentTemp = minTemperature;
 	heatingCoefficient = heating;
 }
+AziziAdaptativeCooling::~AziziAdaptativeCooling() { }
 
 double AziziAdaptativeCooling::getNewTemperature(int noImprovementCounter){
 	currentTemp = minTemperature + (heatingCoefficient * log(1+noImprovementCounter));

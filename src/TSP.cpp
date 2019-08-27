@@ -26,7 +26,7 @@ TSP::~TSP()
 	for (int i=0;i<m_size;i++)
         delete [] m_distance_matrix[i];
     delete [] m_distance_matrix;
-    delete [] m_aux;
+//    delete [] m_aux;
 }
 
 
@@ -211,7 +211,7 @@ int TSP::Read2(string filename)
 			string sub;
 		    iss >> sub;
 		    if (sub!=""){
-				//save distance in distances m_distance_matrix. Save negative distance in order to minimize fitness instead of
+				//save distance in distances m_distance_matrix. Save negative distance in order to minimize m_fitness instead of
 				//maximize.
 		    	m_distance_matrix[i][j]= atoi(sub.c_str());
 		    	m_distance_matrix[j][i]= atoi(sub.c_str());//<-symmetric m_distance_matrix
@@ -311,7 +311,7 @@ int TSP::ReadInstance(string filename)
 }
 
  /*
- * This function evaluates the fitness of the solution for the TSP problem.
+ * This function evaluates the m_fitness of the solution for the TSP problem.
  */
 double TSP::Evaluate(int * genes)
 {
@@ -376,4 +376,3 @@ int TSP::GetProblemSize()
 {
     return m_size;
 }
-

@@ -43,10 +43,10 @@ struct EDAUtils::byFitness {
 } structuredByFitness;
 
 //struct EDAUtils::byPermutation {
-//	int *permutation;
+//	int *m_permutation;
 //	byPermutation():
 //	bool operator==(RK *i) const {
-//        return (Tools::areEqual(permutation, i->getPermutation(), i->pSize, i->pSize));
+//        return (Tools::areEqual(m_permutation, i->getPermutation(), i->m_pSize, i->m_pSize));
 //    }
 //} structuredByPermutation;
 
@@ -69,10 +69,10 @@ bool EDAUtils::isSortedPopulation(vector<RK*> pop){
 }
 
 bool EDAUtils::popContainsPermutation(vector<RK*> pop, RK *x) {
-//	Tools::PrintArray(x->getPermutation(), x->pSize, "Generated permutation: ");
+//	Tools::PrintArray(x->getPermutation(), x->m_pSize, "Generated m_permutation: ");
 	for(int i=0; i< pop.size(); i++){
-//		Tools::PrintArray(pop.at(i)->getPermutation(), pop.at(i)->pSize, "Permutation in pop: ");
-		if (Tools::areEqual(pop.at(i)->getPermutation(), x->getPermutation(), pop.at(i)->pSize, x->pSize)){
+//		Tools::PrintArray(pop.at(i)->getPermutation(), pop.at(i)->m_pSize, "Permutation in pop: ");
+		if (Tools::areEqual(pop.at(i)->getPermutation(), x->getPermutation(), pop.at(i)->m_pSize, x->m_pSize)){
 			return true;
 		}
 	}
@@ -84,7 +84,7 @@ bool EDAUtils::areRepeatedInPopulation(vector<RK*> pop){
 		RK *perm = pop.at(i);
 		for (int j=0; j<pop.size(); j++){
 			if (i!=j){
-				if (Tools::areEqual(perm->getPermutation(), pop[j]->getPermutation(), perm->pSize, pop[j]->pSize))
+				if (Tools::areEqual(perm->getPermutation(), pop[j]->getPermutation(), perm->m_pSize, pop[j]->m_pSize))
 					cout << i << "," << j << endl;
 					return true;
 			}
@@ -98,10 +98,10 @@ RK* EDAUtils::getBestSolutionMin(vector<RK*> pop){
     for (int i = 1; i < pop.size(); i++) {
         RK *S = pop.at(i);
         if (S->getFitness() < best->getFitness()) {
-            best = S->Clone2();
+            best = S->Clone();
         }
     }
-    return best->Clone2();
+    return best;
 }
 
 double EDAUtils::getPopulationAverageFitness(vector<RK*> pop){
@@ -109,13 +109,15 @@ double EDAUtils::getPopulationAverageFitness(vector<RK*> pop){
 	for(int i=0; i<pop.size(); i++){
 		vals[i] = pop.at(i)->getFitness();
 	}
-	return EDAUtils::Mean(vals, pop.size());
+	double avg = EDAUtils::Mean(vals, pop.size());
+	delete[] vals;
+	return avg;
 }
 
-double* EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize) {
+void EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize, double* matrix) {
     vector<RK*> selectedGenome;
     vector<RK*> pop;
-    double* matrix = new double[pSize];
+//    double* matrix = new double[m_pSize];
     pop = sortPopulation(currentPopulation);
     for (int i = 0; i < truncSize; i++) {
         selectedGenome.push_back(pop[i]);
@@ -140,170 +142,8 @@ double* EDAUtils::getPM(vector<RK*> currentPopulation, int truncSize, int pSize)
     //pop.shrink_to_fit(); // ##C++11
 	pop.swap(pop); // ##C++0x
     
-    return matrix;
-}
-
-//double* EDAUtils::getChild(double* currentModel, double stdev, int pSize) {
-//    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
-//    double* childAct = new double[pSize];
-//    //std::default_random_engine generator; // ##C++11
-//	std::minstd_rand generator; // ##C++0x
-//
-//    for (int x = 0; x < pSize; x++) {
-//        //             double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
-//        double mean = currentModel[x];
-//
-//        std::normal_distribution<double> distribution(mean, stdev);
-//        double r2 = distribution(generator);
-////        cout << r2 << endl;
-//        childAct[x] = r2;
-//
-//    }
-//    return childAct;
-//}
-
-//vector<double*> EDAUtils::getPopulation(double* currentModel, double stdev, int probSize, int populationSize) {
-//    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
-//
-//    vector<double*> population;
-//    std::default_random_engine generator;
-//    for (int i = 0; i < populationSize; i++) {
-//        double* childAct = new double[probSize];
-//        for (int x = 0; x < probSize; x++) {
-//            //             double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
-//            double mean = currentModel[x];
-//
-//            std::normal_distribution<double> distribution(mean, stdev);
-//            double r2 = distribution(generator);
-////            cout << r2 << endl;
-//            childAct[x] = r2;
-//
-//        }
-//        population.push_back(childAct);
-//        delete[] childAct;
-//    }
-//    return population;
-//}
-//
-//vector<RK*> EDAUtils::getPopulationRK(double* currentModel, double stdev, int probSize, int populationSize) {
-//    //        double[] currentModel = Arrays.copyOf(currentModel1,currentModel1.length );
-//
-//    vector<RK*> population;
-//    //std::default_random_engine generator;
-//	std::random_device generator;
-//    for (int i = 0; i < populationSize; i++) {
-//
-//        double* childAct = new double[probSize];
-//        for (int x = 0; x < probSize; x++) {
-//            //             double r2 = r.nextGaussian() * currentModel[x][1] + currentModel[x][0];
-//            double mean = currentModel[x];
-//
-//            std::normal_distribution<double> distribution(mean, stdev);
-//            double r2 = distribution(generator);
-//            childAct[x] = r2;
-//
-//        }
-//        RK child(childAct, probSize);
-//        child.setPermutation(randomKeyToAL(childAct, probSize));
-//        child.normalise();
-//        child.setFitness(fsp.EvaluateFSPTotalFlowtime(child.getPermutation()));
-//        population.push_back(child.Clone());
-//           if (i==0)
-//        {
-//            bestSolution = child.Clone();
-//        }
-//        else
-//        {
-//            if (bestSolution->getFitness() > child.getFitness())
-//            {
-//                bestSolution = child.Clone();
-//            }
-//        }
-//          delete[] childAct;
-//    }
-//    return population;
-//}
-
-
-//vector<RK*> EDAUtils::initialPopulationRK(int probSize, int populationSize, string fileName) {
-//	
-//	fsp.ReadInstance(fileName);
-//    vector<RK*> population;
-//    for (int i = 0; i < populationSize; i++) {
-//        
-//        double* childAct = new double[probSize];
-//        for (int x = 0; x < probSize; x++) {
-//          double  r = ((double) rand() / (RAND_MAX));
-//            childAct[x] = r;
-//
-//        }
-//        RK child(childAct, probSize);
-//        child.setPermutation(randomKeyToAL(childAct, probSize));
-//        child.normalise();
-//        child.setFitness(fsp.EvaluateFSPTotalFlowtime(child.getPermutation()));
-//        population.push_back(child.Clone());
-//        if (i==0)
-//        {
-//            bestSolution = child.Clone();
-//        }
-//        else
-//        {
-//            if (bestSolution->getFitness() > child.getFitness())
-//            {
-//                bestSolution = child.Clone();
-//            }
-//        }
-//          delete[] childAct;
-//    }
-//    
-//    return population;
-//}
-
-int* EDAUtils::randomKeyToAL(double* priorities, int pSize) {
-
-
-	double* p = new double[pSize];
-    vector<int> AL;
-
-    for (int i = 0; i < pSize; i++) {
-		p[i] = priorities[i];
-    }
-    //Tools::printarray(p, pSize);
-	sort(p, p + pSize);
-	//Tools::printarray(p, pSize);
-	int k = 0;
-
-	for (int i = 0; i < pSize; i++) {
-		for (int j = 0; j < pSize; j++) {
-            if (((p[i] == priorities[j]) && AL.empty() == true) || ((p[i] == priorities[j]) && ((std::find(AL.begin(), AL.end(), j) != AL.end()) == false))) {
-
-                AL.push_back(j);
-				k++;
-            }
-
-            if (k == pSize) {
-                goto outer;
-            }
-
-        }
-
-    }
-
-outer:
-
-    // cout << perm2str(AL, pSize) << endl;
-int* AL1 = new int[AL.size()];
-int* AL2 = new int[AL.size()];
-    for (unsigned int i = 0; i < AL.size(); i++) {
-        AL1[i] = AL[i];
-    }
-    Tools::Invert(AL1, pSize, AL2);
-    //Tools::PrintArray(AL2, pSize, "Perm: ");
-    AL.clear();
-    //AL.shrink_to_fit(); // ##C++11
-	AL.swap(AL); // ##C++0x
-    delete[] p;
-    return AL2;
+//    return matrix;
+	//delete[] matrix;
 }
 
 double EDAUtils::Mean(double* array, int tSize) {
@@ -325,6 +165,33 @@ double EDAUtils::Mean(double* array, int tSize) {
 //    var /= (num - 1);
 //    return var;
 //}
+
+//int* EDAUtils::randomKeyToAL(double* rks, int problemSize){
+//		int* AL = new int[problemSize];
+//		double* ordered_rks = new double[problemSize];
+//		bool found = false;
+//		int i, j = 0;
+//		for (i = 0; i < problemSize; i++) {
+//			ordered_rks[i] = rks[i];
+//		}
+////		Tools::printRK(ordered_rks, problemSize);
+//		sort(ordered_rks, ordered_rks + problemSize);
+////		Tools::printRK(ordered_rks, problemSize);
+//		for (i = 0; i < problemSize; i++) {
+//			found = false;
+//			while (!found) {
+//				if (ordered_rks[j] == rks[i]) {
+//					AL[i] = j;
+//					found = true;
+//					j = 0;
+//				} else
+//					j++;
+//			}
+//		}
+////		Tools::printPermutation(AL, problemSize);
+//		delete[] ordered_rks;
+//		return AL;
+//	}
 
 RK* EDAUtils::minimumSolution(RK* sol1, RK* sol2) {
 	RK *sol = new RK();

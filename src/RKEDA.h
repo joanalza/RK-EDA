@@ -17,7 +17,9 @@ using namespace std;
 class RKEDA {
 public:
 
-    RKEDA(int popSize, std::string problemPath, std::string dynamicPath, int FEs, int truncSize, int elitism, std::string results, unsigned long theseed, int restart);
+	RKEDA();
+    RKEDA(int popSize, string problemPath, string dynamicPath, int FEs, int truncSize, int elitism, string results, unsigned long theseed, int restart);
+	virtual ~RKEDA();
 
 //    void setResultsPath(std::string fileName, std::string dynamicName, double minTemp, double heating, int run);
     void runAlgorithm(double minTemp, double heating);
@@ -33,7 +35,7 @@ public:
     string m_resultsPath;
     string m_modelPath;
     EDAUtils m_e;
-    PFSP m_fsp;
+//    PFSP m_fsp;
     DynPermP *m_dop;
     AziziAdaptativeCooling m_cooling;
 	unsigned long m_seed;

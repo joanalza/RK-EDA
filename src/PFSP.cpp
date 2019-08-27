@@ -101,7 +101,7 @@ int PFSP::ReadInstance(string filename)
 		iss >> sub;
 		if (sub != "")
 		{
-			//save distance in distances matrix. Save negative distance in order to minimize fitness instead of
+			//save distance in distances matrix. Save negative distance in order to minimize m_fitness instead of
 			//maximize.
 			JOBPROCESSINGMATRIX[i][j] = atoi(sub.c_str());
 			if (j == JOB_NUM - 1)
@@ -224,7 +224,7 @@ int PFSP::ReadInstance(string filename)
 //	    iss >> sub;
 //	    if (sub!="")
 //	    {
-//			//save distance in distances matrix. Save negative distance in order to minimize fitness instead of
+//			//save distance in distances matrix. Save negative distance in order to minimize m_fitness instead of
 //			//maximize.
 //	    	JOBPROCESSINGMATRIX[i][j]= atoi(sub.c_str());
 //	    	if (j==JOB_NUM-1)
