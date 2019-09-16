@@ -1,22 +1,16 @@
-/*
- *  LOP.h
- *  RankingEDAsCEC
- *
- *  Created by Josu Ceberio Uribe on 11/21/11.
- *  Copyright 2011 University of the Basque Country. All rights reserved.
- *
- */
-
-#ifndef _LOP_H__
-#define _LOP_H__
+#ifndef _DQAP_H__
+#define _DQAP_H__
 
 #include "Tools.h"
 #include <stdlib.h>
+#include <math.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 #include <string.h>
 #include <stdio.h>
+#include "DynPermP.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -26,50 +20,53 @@ using namespace std;
 using std::cerr;
 using std::cout;
 using std::endl;
-using std::ifstream;
 using std::stringstream;
 using std::string;
 
-class LOP
+class DQAP : public DynPermP
 {
 	
 public:
 	
     /*
-     * Entries matrix of the LOP.
+     * The matrix of distances between the cities.
      */
-	int ** m_matrix;
-    
-	/*
-	 * The size of the problem.
-	 */
-	int m_problemsize;
-
-	int* m_aux;
-		
-
+	int ** m_distance_matrix;
+	
     /*
-     * The constructor.
+     * The flow matrix.
      */
-	LOP();
+	int ** m_flow_matrix;
+	
+	/*
+	 * The number of jobs of the problem.
+	 */
+	int m_size;
+
+	int *m_aux;
+	
+	/*
+     * The constructor. It initializes a QAP from a file.
+     */
+	DQAP();
 	
     /*
      * The destructor.
      */
-    virtual ~LOP();
+    virtual ~DQAP();
 	
 	/*
-	 * Read LOP instance file.
+	 * Read QAP file.
 	 */
 	int ReadInstance(string filename);
 	
 	/*
-	 * This function evaluates the solution for the LOP problem.
+	 * This function evaluates the individuals for the QAP problem.
 	 */
 	double Evaluate(int * genes);
     
     /*
-     * This function evaluates the inverted solution of the given solution for the LOP problem.
+     * This function evaluates the inverted solution of the given individual for the QAP problem.
      */
     double EvaluateInv(int * genes);
 	
@@ -77,13 +74,7 @@ public:
      * Returns the size of the problem.
      */
     int GetProblemSize();
-    
 private:
-    
+	
 };
 #endif
-
-
-
-
-

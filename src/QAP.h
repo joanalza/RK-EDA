@@ -19,7 +19,6 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
-#include "DynPermP.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -32,7 +31,7 @@ using std::endl;
 using std::stringstream;
 using std::string;
 
-class QAP : public DynPermP
+class QAP
 {
 	
 public:

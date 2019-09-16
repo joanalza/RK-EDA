@@ -1,12 +1,3 @@
-/*
- *  LOP.h
- *  RankingEDAsCEC
- *
- *  Created by Josu Ceberio Uribe on 11/21/11.
- *  Copyright 2011 University of the Basque Country. All rights reserved.
- *
- */
-
 #ifndef _LOP_H__
 #define _LOP_H__
 
@@ -17,6 +8,7 @@
 #include <sstream>
 #include <string.h>
 #include <stdio.h>
+#include "DynPermP.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -30,7 +22,7 @@ using std::ifstream;
 using std::stringstream;
 using std::string;
 
-class LOP
+class DLOP : public DynPermP
 {
 	
 public:
@@ -51,12 +43,12 @@ public:
     /*
      * The constructor.
      */
-	LOP();
+	DLOP();
 	
     /*
      * The destructor.
      */
-    virtual ~LOP();
+    virtual ~DLOP();
 	
 	/*
 	 * Read LOP instance file.

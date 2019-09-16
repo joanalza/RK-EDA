@@ -108,7 +108,7 @@ bool DynPermP::changeIdentityPermutation(int fes, int maxfes) {
 		int nextChangeFes = (int)rint(m_normalisedChangeGenerations[m_nextChangeIndex] * (double)maxfes);
 		if (fes >= nextChangeFes) {
 			m_identityPerm = m_identityPermutations[m_nextChangeIndex];
-			Tools::printPermutationWithPrefix(m_identityPerm, m_problemSize, "Changed identity perm: ");
+//			Tools::printPermutationWithPrefix(m_identityPerm, m_problemSize, "Changed identity perm: ");
 			m_nextChangeIndex++;
 			return true;
 		}

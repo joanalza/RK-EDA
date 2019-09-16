@@ -244,7 +244,7 @@ void RKEDA::runAlgorithm(double minTemp, double heating) {
 
 		}
 		else {
-			cout << "Gen: " << gen << ". Change: " << ichange - 1 << ". Best: " << bestPerChange->getFitness() << ". Avg: " << avgPopFitness << endl;
+//			cout << "Gen: " << gen << ". Change: " << ichange - 1 << ". Best: " << bestPerChange->getFitness() << ". Avg: " << avgPopFitness << endl;
 		}
 
 //		cout << (((double) (endtime - starttime)) / CLOCKS_PER_SEC) << endl;

@@ -1,14 +1,5 @@
-/*
- *  TSP.h
- *  RankingEDAsCEC
- *
- *  Created by Josu Ceberio Uribe on 7/11/13.
- *  Copyright 2013 University of the Basque Country. All rights reserved.
- *
- */
-
-#ifndef _TSP_H__
-#define _TSP_H__
+#ifndef _DTSP_H__
+#define _DTSP_H__
 
 #include "Tools.h"
 #include <stdlib.h>
@@ -20,6 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "DynPermP.h"
 using std::ifstream;
 using std::ofstream;
 using std::istream;
@@ -32,7 +24,7 @@ using std::ifstream;
 using std::stringstream;
 using std::string;
 
-class TSP
+class DTSP : public DynPermP
 {
 	
 public:
@@ -52,17 +44,17 @@ public:
 	/*
      * The constructor.
      */
-	TSP();
+	DTSP();
 	
     /*
      * The destructor.
      */
-    virtual ~TSP();
+    virtual ~DTSP();
 	
 	/*
 	 * Read TSP instance file that belongs to the TSPLIB library.
 	 */
-	int Read2(string filename);
+	int ReadTSPLIB(string filename);
 
     /*
 	 * Read TSP instance file.
@@ -78,6 +70,8 @@ public:
 	 * This function evaluates the inverted solution of the given solution for the TSP problem.
 	 */
 	double EvaluateInv(int * genes);
+
+	double CalculateGEODistance(double latitudeX, double latitudeY, double longitudeX, double longitudeY);
     
     /*
      * Returns the size of the problem.
